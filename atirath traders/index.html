@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATIRATH TRADERS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+    import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCX3ZpJqIP5LfUyKfoezUhwdvP1e1xwtVw",
+      authDomain: "atirath-tipl.firebaseapp.com",
+      databaseURL: "https://atirath-tipl-default-rtdb.firebaseio.com",
+      projectId: "atirath-tipl",
+      storageBucket: "atirath-tipl.firebasestorage.app",
+      messagingSenderId: "51322896257",
+      appId: "1:51322896257:web:e10965c97b4b14c4aa3280",
+      measurementId: "G-BV6G1EL55H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    window.db = db;
+    window.ref = ref;
+    window.push = push;
+    window.serverTimestamp = serverTimestamp;
+  </script>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="glass flex items-center justify-between px-6 py-4 fixed top-0 w-full z-50">
+    <div class="logo-container">
+      <div class="nav-logo">
+        <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+      </div>
+      <div>
+        <div class="text-xl font-extrabold accent">ATIRATH TRADERS INDIA PVT.LTD</div>
+        <div class="text-xs opacity-80">Diverse Businesses, One Vision</div>
+      </div>
+    </div>
+    <div id="nav-search" class="hidden mx-auto max-w-xs">
+      <input type="text" id="nav-search-input" class="search-bar" placeholder="Search products...">
+    </div>
+    <div class="hidden md:flex items-center gap-6">
+      <a href="#" class="hover:text-[#D9E1F1] nav-link" data-page="home">Home</a>
+      <a href="#about" class="hover:text-[#D9E1F1] nav-link" data-page="home">About Us</a>
+      <a href="#leadership" class="hover:text-[#D9E1F1] nav-link" data-page="home">Leadership</a>
+      <a href="#services" class="hover:text-[#D9E1F1] nav-link" data-page="home">Services</a>
+      <a href="#feedback" class="hover:text-[#D9E1F1] nav-link" data-page="home">Feedback</a>
+      <a href="#contact" class="hover:text-[#D9E1F1] nav-link" data-page="home">Contact</a>
+      <a href="#" class="bg-[#31487A] py-2 px-4 rounded-lg hover:bg-[#192338] nav-link" data-page="signin">Sign In</a>
+      <a href="#" class="bg-[#31487A] py-2 px-4 rounded-lg hover:bg-[#192338] nav-link" data-page="signup">Sign Up</a>
+    </div>
+    <button id="menu-btn" class="md:hidden accent focus:outline-none">
+      <i data-lucide="menu" class="w-7 h-7"></i>
+    </button>
+  </nav>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="glass flex-col items-center md:hidden">
+    <a href="#" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">Home</a>
+    <a href="#about" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">About Us</a>
+    <a href="#leadership" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">Leadership</a>
+    <a href="#services" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">Services</a>
+    <a href="#feedback" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">Feedback</a>
+    <a href="#contact" class="hover:text-[#D9E1F1] text-lg nav-link" data-page="home">Contact</a>
+    <a href="#" class="bg-[#31487A] py-2 px-4 rounded-lg hover:bg-[#192338] text-lg nav-link" data-page="signin">Sign In</a>
+    <a href="#" class="bg-[#31487A] py-2 px-4 rounded-lg hover:bg-[#192338] text-lg nav-link" data-page="signup">Sign Up</a>
+  </div>
+
+  <!-- Home Page -->
+  <div id="home-page" class="page active">
+    <!-- Hero Section with Slideshow -->
+    <section id="home" class="relative overflow-hidden">
+      <div class="slideshow-container">
+        <!-- Slide 1 -->
+        <div class="slide active"
+          style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')">
+          <div class="slide-overlay">
+            <div class="slide-content">
+              <h2 class="slide-title">Diverse Businesses, One Vision</h2>
+              <p class="slide-subtitle">Leading innovation across multiple industries</p>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide"
+          style="background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')">
+          <div class="slide-overlay">
+            <div class="slide-content">
+              <h2 class="slide-title">Premium Agricultural Products</h2>
+              <p class="slide-subtitle">Quality seeds, Edible oils, and food products</p>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide"
+          style="background-image: url('https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')">
+          <div class="slide-overlay">
+            <div class="slide-content">
+              <h2 class="slide-title">Global Reach, Local Impact</h2>
+              <p class="slide-subtitle">Serving customers across 42 countries</p>
+            </div>
+          </div>
+        </div>
+        <!-- Navigation arrows -->
+        <button class="slide-arrow prev">&#10094;</button>
+        <button class="slide-arrow next">&#10095;</button>
+        <!-- Navigation dots -->
+        <div class="slide-nav">
+          <div class="slide-dot active"></div>
+          <div class="slide-dot"></div>
+          <div class="slide-dot"></div>
+        </div>
+      </div>
+    </section>
+    <!-- About Us -->
+    <section id="about" class="py-16 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-5xl font-extrabold accent mb-12 text-center" data-aos="zoom-in">About Us</h2>
+        
+        <!-- First row -->
+        <div class="flex flex-col md:flex-row items-center mb-16">
+          <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8" data-aos="fade-right">
+            <img src="found.jpg" alt="ATIRATH GROUP Overview" class="rounded-2xl shadow-xl w-full h-auto">
+          </div>
+          <div class="md:w-1/2 md:pl-8" data-aos="fade-up">
+            <h3 class="text-4xl font-bold accent mb-4">Foundation</h3>
+            <p class="text-2xl opacity-90">
+              Atirath Traders India Pvt. Ltd. — a fast-growing, globally connected trading powerhouse founded in 2023 and
+              headquartered in Hyderabad, with a strategic presence in Guwahati and key international markets including
+              UAE, Oman, Africa, USA, and London. Emphasize our core focus on wholesale trading, import, and export of
+              high-demand categories:
+              FMCG, agricultural commodities, Edible oils, and personal care products.
+            </p>
+          </div>
+        </div>
+
+        <!-- Second row -->
+        <div class="flex flex-col md:flex-row items-center mb-16">
+          <div class="md:w-1/2 md:pr-8 order-2 md:order-1" data-aos="fade-up">
+            <h3 class="text-4xl font-bold accent mb-4">Diversified Portfolio</h3>
+            <p class="text-2xl opacity-90">
+              Highlight our competitive edge — quality-driven sourcing, agile supply chain excellence, and customer-first
+              philosophy — backed by a team blending deep local market insight with global trade expertise. Convey our
+              mission: to be the trusted bridge
+              between global suppliers and buyers, enabling sustainable, scalable growth for all stakeholders. Tone:
+              confident, professional, forward-thinking, and partnership-oriented.
+            </p>
+          </div>
+          <div class="md:w-1/2 mb-8 md:mb-0 md:pl-8 order-1 md:order-2" data-aos="fade-left">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="rounded-2xl shadow-xl w-full h-auto">
+          </div>
+        </div>
+
+        <!-- Third row -->
+        <div class="flex flex-col md:flex-row items-center mb-16">
+          <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8" data-aos="fade-right">
+            <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="rounded-2xl shadow-xl w-full h-auto">
+          </div>
+          <div class="md:w-1/2 md:pl-8" data-aos="fade-up">
+            <h3 class="text-4xl font-bold accent mb-4">Our Vision</h3>
+            <p class="text-2xl opacity-90">
+              To be the leading global trading partner, recognized internationally for our profound expertise, unwavering
+              ethical practices, and steadfast commitment to achieving unparalleled client success.
+            </p><br>
+            <h3 class="text-4xl font-bold accent mb-4">Our Mission</h3>
+            <p class="text-2xl opacity-90">
+              To facilitate seamless and profitable trade connections, empowering businesses of all sizes to thrive in the
+              dynamic global marketplace. We aim to simplify international trade complexities for our partners.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leadership -->
+    <section id="leadership" class="py-16 px-6">
+      <h3 class="text-3xl font-bold text-center accent mb-12" data-aos="zoom-in">Our Leadership</h3>
+      <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="glass p-6 text-center leader-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="leader-img-container mx-auto mb-3">
+            <img src="tripti.jpg" alt="Managing Director"
+              class="rounded-full border-4 border-[#8FB3E2] w-[150px] h-[170px] object-cover" />
+            <div class="glitter-overlay">
+              <div class="glitter-particle particle-1"></div>
+              <div class="glitter-particle particle-2"></div>
+              <div class="glitter-particle particle-3"></div>
+              <div class="glitter-particle particle-4"></div>
+            </div>
+          </div>
+          <h4 class="text-xl font-semibold accent">Managing Director</h4>
+          <h4 class="text-xl font-semibold accent">Ms. Tripti Gaur</h4>
+          <p class="text-sm mt-2">With 10+ years of expertise in HR, Marketing, Export-Import, and Strategic Leadership,
+            she brings a wealth of knowledge to the organization.
+            An MBA in HR & Marketing, she has successfully driven global business expansion
+            and positioned the company as a strong player in agro-trade and exports.</p>
+        </div>
+        <div class="glass p-6 text-center leader-card" data-aos="fade-up" data-aos-delay="400">
+          <div class="leader-img-container mx-auto mb-4">
+            <img src="Director.png" alt="CEO"
+              class="rounded-full border-4 border-[#8FB3E2] w-[150px] h-[170px] object-cover" />
+            <div class="glitter-overlay">
+              <div class="glitter-particle particle-1"></div>
+              <div class="glitter-particle particle-2"></div>
+              <div class="glitter-particle particle-3"></div>
+              <div class="glitter-particle particle-4"></div>
+            </div>
+          </div>
+          <h4 class="text-xl font-semibold accent">CEO</h4>
+          <h4 class="text-xl font-semibold accent">Mr. G. Chandar</h4>
+          <p class="text-sm mt-2">He brings expertise in real estate, agriculture, IT, and supply chain management. Having
+            worked with international partners across MENA and USA markets, he plays a key role in driving operational
+            excellence, building partnerships, and expanding Atirath Traders' global presence.</p>
+        </div>
+        <div class="glass p-6 text-center leader-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="leader-img-container mx-auto mb-3">
+            <img src="faiz.jpg" alt="Executive Director"
+              class="rounded-full border-4 border-[#8FB3E2] w-[150px] h-[170px] object-cover" />
+            <div class="glitter-overlay">
+              <div class="glitter-particle particle-1"></div>
+              <div class="glitter-particle particle-2"></div>
+              <div class="glitter-particle particle-3"></div>
+              <div class="glitter-particle particle-4"></div>
+            </div>
+          </div>
+          <h4 class="text-xl font-semibold accent">Executive Director</h4>
+          <h4 class="text-xl font-semibold accent">Mr. Md. Faiz</h4>
+          <p class="text-sm mt-2">He brings international experience from Motorola IT and supply chain management. At
+            Atirath Traders, he drives financial discipline, operational efficiency, and international expansion, ensuring
+            sustainable growth and customer-centric outcomes.</p>
+        </div>
+      </div>
+    </section>
+    <!-- Services -->
+    <section id="services" class="py-10 px-5">
+      <h3 class="text-3xl font-bold text-center accent mb-12" data-aos="zoom-in">Our Services</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 max-w-7xl mx-auto">
+        <!-- Service cards will be loaded from services.html -->
+      </div>
+    </section>
+    <!-- Feedback -->
+    <section id="feedback" class="py-16 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h3 class="text-3xl font-bold text-center accent mb-12" data-aos="zoom-in">Feedback</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Left side: Company Details -->
+          <div class="glass p-8 flex flex-col space-y-6" data-aos="fade-up">
+            <div class="flex items-center gap-4">
+              <div class="footer-logo-icon">
+                <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+              </div>
+              <div>
+                <h4 class="text-xl font-bold accent">ATIRATH TRADERS INDIA PVT.LTD</h4>
+                <p class="text-sm opacity-80">Diverse Businesses, One Vision</p>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm mb-2"><span class="font-semibold">Website:</span> www.atipl.com</p>
+              <p class="text-sm mb-2"><span class="font-semibold">Email:</span> info@atirathtraders.com</p>
+              <p class="text-sm mb-2"><span class="font-semibold">Phone:</span> +1 (555) 123-4567</p>
+              <p class="text-sm mb-2"><span class="font-semibold">Social Media:</span> @AtirathTraders (LinkedIn, Instagram, Facebook, Twitter)</p>
+              <p class="text-sm"><span class="font-semibold">Address:</span> 123 Madhapur, Hyderabad, Telangana, India</p>
+            </div>
+          </div>
+          <!-- Right side: Feedback Form -->
+          <div class="glass p-8" data-aos="fade-up" data-aos-delay="200">
+            <form id="feedback-form" class="space-y-6">
+              <div>
+                <label class="block mb-2 text-sm font-semibold">Name</label>
+                <input type="text" name="name"
+                  class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+                  placeholder="Enter your name" required />
+              </div>
+              <div>
+                <label class="block mb-2 text-sm font-semibold">Email</label>
+                <input type="email" name="email"
+                  class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+                  placeholder="Enter your email" required />
+              </div>
+              <div>
+                <label class="block mb-2 text-sm font-semibold">Message</label>
+                <textarea rows="4" name="message"
+                  class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+                  placeholder="Write your feedback..." required></textarea>
+              </div>
+              <button type="submit"
+                class="w-full py-3 bg-[#31487A] hover:bg-[#192338] rounded-lg font-semibold transition-colors">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div id="feedback-success-popup" class="popup">
+        <div class="popup-content">
+          <h3>Submit Successful</h3>
+          <p>Thank you for your feedback! We appreciate your input.</p>
+          <button id="feedback-close-popup" class="focus:outline-none">Close</button>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer id="contact" class="py-4 mt-6 border-t border-[rgba(255,255,255,0.1)]">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="footer-content">
+          <div class="flex items-center mb-4 md:mb-0">
+            <div class="footer-logo-icon">
+              <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+            </div>
+            <div>
+              <div class="footer-company-name">ATIRATH TRADERS INDIA PVT.LTD</div>
+            </div>
+          </div>
+          <div class="text-center text-xs opacity-65">
+            © 2025 ATIRATH TRADERS INDIA PVT.LTD.
+          </div>
+          <div class="flex gap-4 justify-center">
+            <a href="https://www.instagram.com/ATIRATH_TRADERS/" class="hover:text-[#8FB3E2] transition-colors"
+              aria-label="Instagram">
+              <i data-lucide="instagram" class="w-5 h-5"></i>
+            </a>
+            <a href="https://twitter.com/@atirath35518" class="hover:text-[#8FB3E2] transition-colors"
+              aria-label="Twitter">
+              <i data-lucide="twitter" class="w-5 h-5"></i>
+            </a>
+            <a href="https://www.facebook.com/ATIRATH TRADERS" class="hover:text-[#8FB3E2] transition-colors"
+              aria-label="Facebook">
+              <i data-lucide="facebook" class="w-5 h-5"></i>
+            </a>
+            <a href="#" class="hover:text-[#8FB3E2] transition-colors" aria-label="YouTube">
+              <i data-lucide="youtube" class="w-5 h-5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Product Page -->
+  <div id="product-page" class="page product-page">
+    <button class="categories-toggle" id="categories-toggle">
+      <i data-lucide="menu" class="w-5 h-5"></i> Categories
+    </button>
+    
+    <div class="categories-sidebar" id="categories-sidebar">
+      <h3 class="text-xl font-bold accent mb-4">Brands</h3>
+      <ul class="brand-list">
+        <!-- Brands will be dynamically added here -->
+      </ul>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="max-w-7xl mx-auto px-6">
+      <a href="home" class="back-button nav-link" data-page="home" title="Back to Home">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+      </a>
+      
+      <div class="products-grid" id="products-grid">
+        <!-- Products will be dynamically added here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign In Page -->
+  <div id="signin-page" class="page auth-page">
+    <div class="max-w-md mx-auto relative">
+      <a href="home" class="back-button mb-6 inline-block nav-link" data-page="home" title="Back to Home">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+      </a>
+      <div class="glass p-8" data-aos="fade-up">
+        <div class="logo-container-center">
+          <div class="nav-logo">
+            <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+          </div>
+        </div>
+        <h2 class="text-3xl font-bold accent mb-6 text-center">Sign In</h2>
+        <form id="signin-form" class="space-y-6">
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Email</label>
+            <input type="email" name="email"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Enter your email" required />
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Password</label>
+            <input type="password" name="password"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Enter your password" required />
+          </div>
+          <button type="submit"
+            class="w-full py-3 bg-[#31487A] hover:bg-[#192338] rounded-lg font-semibold transition-colors">Sign In</button>
+        </form>
+        <p class="text-sm text-center mt-4">
+          Don't have an account? <a href="#" class="accent hover:underline nav-link" data-page="signup">Sign Up</a>
+        </p>
+      </div>
+    </div>
+    <div id="signin-success-popup" class="popup">
+      <div class="popup-content">
+        <h3>Sign In Successful</h3>
+        <p>Welcome back! You are now signed in.</p>
+        <button id="signin-close-popup" class="focus:outline-none">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign Up Page -->
+  <div id="signup-page" class="page auth-page">
+    <div class="max-w-md mx-auto relative">
+      <a href="home" class="back-button mb-6 inline-block nav-link" data-page="home" title="Back to Home">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+      </a>
+      <div class="glass p-8" data-aos="fade-up">
+        <div class="logo-container-center">
+          <div class="nav-logo">
+            <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+          </div>
+        </div>
+        <h2 class="text-3xl font-bold accent mb-6 text-center">Sign Up</h2>
+        <form id="signup-form" class="space-y-6">
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Name</label>
+            <input type="text" name="name"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Enter your name" required />
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Email</label>
+            <input type="email" name="email"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Enter your email" required />
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Password</label>
+            <input type="password" name="password"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Enter your password" required />
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-semibold">Confirm Password</label>
+            <input type="password" name="confirm-password"
+              class="w-full p-3 rounded-lg bg-[#1E2E4F] border border-[#8FB3E2] focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]"
+              placeholder="Confirm your password" required />
+          </div>
+          <button type="submit"
+            class="w-full py-3 bg-[#31487A] hover:bg-[#192338] rounded-lg font-semibold transition-colors">Sign Up</button>
+        </form>
+        <p class="text-sm text-center mt-4">
+          Already have an account? <a href="#" class="accent hover:underline nav-link" data-page="signin">Sign In</a>
+        </p>
+      </div>
+    </div>
+    <div id="signup-success-popup" class="popup">
+      <div class="popup-content">
+        <h3>Sign Up Successful</h3>
+        <p>Thank you for signing up! You can now sign in.</p>
+        <button id="signup-close-popup" class="focus:outline-none">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Page -->
+  <div id="profile-page" class="page auth-page">
+    <div class="max-w-md mx-auto relative">
+      <a href="home" class="back-button mb-6 inline-block nav-link" data-page="home" title="Back to Home">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+      </a>
+      <div class="glass profile-card p-8" data-aos="fade-up">
+        <div class="logo-container-center">
+          <div class="nav-logo">
+            <img src="icon2.png" alt="ATIRATH GROUP Logo" class="logo-img">
+          </div>
+        </div>
+        <h2 class="text-3xl font-bold accent mb-6 text-center">Profile</h2>
+        <div class="profile-info">
+          <div id="profile-avatar" class="profile-avatar"></div>
+          <div id="profile-name" class="profile-name"></div>
+          <div id="profile-email" class="profile-email"></div>
+          <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

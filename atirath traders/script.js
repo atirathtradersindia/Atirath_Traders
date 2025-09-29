@@ -1,7 +1,8 @@
+// Initialize libraries
 lucide.createIcons();
 AOS.init({ duration: 1000, once: true });
 
-// Products and brands data (keep your existing data)
+// Products and brands data
 const productsData = {
   oil: [
     { id: 1, name: "Premium Sunflower Oil", brand: "sunflower", price: "₹830", image: "https://images.unsplash.com/photo-1600174279244-8edd4673c5e3?auto=format&fit=crop&w=800&q=80" },
@@ -203,10 +204,12 @@ const brandsData = {
   tea: ["black", "green", "herbal", "oolong", "white", "puerh"]
 };
 
+
 // Global variables
 let currentProductType = null;
 let currentProducts = [];
 let cart = [];
+let currentUser = null;
 
 // Function to save current page state
 function savePageState(pageId, productType = null) {
@@ -249,53 +252,62 @@ function showPage(pageId, productType = null) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Check if there's a saved page state
-  const savedPage = localStorage.getItem('currentPage');
-  const savedProductType = localStorage.getItem('currentProductType');
+// Function to handle navigation
+function handleNavigation(e) {
+  e.preventDefault();
+  const targetPage = this.getAttribute('data-page');
   
-  // Load service cards first
-  loadServiceCards();
-  
-  // Page navigation functionality
-  const pages = document.querySelectorAll('.page');
-  const navLinks = document.querySelectorAll('.nav-link');
-  const navSearch = document.getElementById('nav-search');
-
-  // Check for saved page state on load
-  if (savedPage && savedPage === 'product-page' && savedProductType) {
-    // Show product page with saved product type
-    currentProductType = savedProductType;
-    showPage('product-page', savedProductType);
-    initializeProductPage(savedProductType);
-  } else if (savedPage) {
-    // Show other saved page
-    showPage(savedPage);
-  } else {
-    // Default to home page
-    showPage('home-page');
-  }
-
-  // Add event listeners to navigation links
-  navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const targetPage = this.getAttribute('data-page');
-      if (targetPage) {
-        if (targetPage === 'home' && this.getAttribute('href').startsWith('#')) {
-          // Scroll to section on home page
+  if (targetPage) {
+    if (targetPage === 'home' && this.getAttribute('href') && this.getAttribute('href').startsWith('#')) {
+      // If we're on the home page and it's a section link, scroll to section
+      if (document.getElementById('home-page').classList.contains('active')) {
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // If we're not on home page, go to home page first
+        showPage('home-page');
+        // Then scroll to section after a short delay
+        setTimeout(() => {
           const targetId = this.getAttribute('href').substring(1);
           const targetElement = document.getElementById(targetId);
           if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth' });
           }
-          // Close mobile menu if open
-          const mobileMenu = document.getElementById('mobile-menu');
-          if (mobileMenu && mobileMenu.classList.contains('visible')) {
-            mobileMenu.classList.remove('visible');
-          }
-        } else {
-          showPage(targetPage + '-page');
+        }, 100);
+      }
+    } else {
+      // Regular page navigation
+      showPage(targetPage + '-page');
+    }
+    
+    // Close mobile menu if open
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu && mobileMenu.classList.contains('visible')) {
+      mobileMenu.classList.remove('visible');
+    }
+  }
+}
+
+// Function to add event listeners to service cards using event delegation
+function addServiceCardListeners() {
+  const servicesGrid = document.querySelector('#services .grid');
+
+  if (servicesGrid) {
+    servicesGrid.addEventListener('click', function(e) {
+      const serviceCard = e.target.closest('.service-card');
+    
+      if (serviceCard) {
+        const product = serviceCard.getAttribute('data-product');
+        console.log('Service card clicked, product:', product);
+      
+        if (product) {
+          currentProductType = product;
+          showPage('product-page', product);
+          initializeProductPage(currentProductType);
+        
           // Close mobile menu if open
           const mobileMenu = document.getElementById('mobile-menu');
           if (mobileMenu && mobileMenu.classList.contains('visible')) {
@@ -304,272 +316,223 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
-  });
-
-  // Function to add event listeners to service cards using event delegation
-  function addServiceCardListeners() {
-    const servicesGrid = document.querySelector('#services .grid');
-  
-    if (servicesGrid) {
-      servicesGrid.addEventListener('click', function(e) {
-        const serviceCard = e.target.closest('.service-card');
-      
-        if (serviceCard) {
-          const product = serviceCard.getAttribute('data-product');
-          console.log('Service card clicked, product:', product);
-        
-          if (product) {
-            currentProductType = product;
-            showPage('product-page', product);
-            initializeProductPage(currentProductType);
-          
-            // Close mobile menu if open
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu && mobileMenu.classList.contains('visible')) {
-              mobileMenu.classList.remove('visible');
-            }
-          }
-        }
-      });
-    }
   }
+}
 
-  // Product Page Functionality
-  function initializeProductPage(type) {
-    console.log('Initializing product page for:', type);
+// Product Page Functionality
+function initializeProductPage(type) {
+  console.log('Initializing product page for:', type);
+
+  const products = productsData[type] || [];
+  const brands = brandsData[type] || [];
+  const productsGrid = document.getElementById('products-grid');
+  const brandList = document.querySelector('.brand-list');
+  const sidebarTitle = document.querySelector('.categories-sidebar h3');
+  const searchInput = document.getElementById('nav-search-input');
+  const categoriesToggle = document.getElementById('categories-toggle');
+  const categoriesSidebar = document.getElementById('categories-sidebar');
+  const overlay = document.getElementById('overlay');
+  const container = document.querySelector('.product-page .max-w-7xl');
   
-    const products = productsData[type] || [];
-    const brands = brandsData[type] || [];
-    const productsGrid = document.getElementById('products-grid');
-    const brandList = document.querySelector('.brand-list');
-    const sidebarTitle = document.querySelector('.categories-sidebar h3');
-    const searchInput = document.getElementById('nav-search-input');
-    const categoriesToggle = document.getElementById('categories-toggle');
-    const categoriesSidebar = document.getElementById('categories-sidebar');
-    const overlay = document.getElementById('overlay');
-    const container = document.querySelector('.product-page .max-w-7xl');
-    
-    currentProducts = products;
-    
-    // Set title
-    if (sidebarTitle) {
-      sidebarTitle.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Brands`;
+  currentProducts = products;
+  
+  // Set title
+  if (sidebarTitle) {
+    sidebarTitle.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Brands`;
+  }
+  
+  // Render brands
+  if (brandList) {
+    brandList.innerHTML = '';
+    brands.forEach((brand, index) => {
+      const li = document.createElement('li');
+      li.className = 'brand-item';
+      li.dataset.brand = brand;
+      li.textContent = brand.charAt(0).toUpperCase() + brand.slice(1);
+      li.setAttribute('data-aos', 'slide-right');
+      li.setAttribute('data-aos-delay', (index * 50).toString());
+      brandList.appendChild(li);
+    });
+  }
+  
+  // Render products function
+  function renderProducts(prods) {
+    if (!productsGrid) return;
+  
+    productsGrid.innerHTML = '';
+  
+    if (prods.length === 0) {
+      productsGrid.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <p class="text-lg accent">No products found</p>
+          <p class="text-sm opacity-80 mt-2">Try selecting a different brand or search term</p>
+        </div>
+      `;
+      return;
     }
-    
-    // Render brands
-    if (brandList) {
-      brandList.innerHTML = '';
-      brands.forEach((brand, index) => {
-        const li = document.createElement('li');
-        li.className = 'brand-item';
-        li.dataset.brand = brand;
-        li.textContent = brand.charAt(0).toUpperCase() + brand.slice(1);
-        li.setAttribute('data-aos', 'slide-right');
-        li.setAttribute('data-aos-delay', (index * 50).toString());
-        brandList.appendChild(li);
-      });
-    }
-    
-    // Render products function
-    function renderProducts(prods) {
-      if (!productsGrid) return;
-    
-      productsGrid.innerHTML = '';
-    
-      if (prods.length === 0) {
-        productsGrid.innerHTML = `
-          <div class="col-span-full text-center py-12">
-            <p class="text-lg accent">No products found</p>
-            <p class="text-sm opacity-80 mt-2">Try selecting a different brand or search term</p>
-          </div>
-        `;
-        return;
-      }
-    
-      prods.forEach(product => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" class="product-image">
-          <div class="product-info">
-            <h3 class="product-title">${product.name}</h3>
-            <div class="flex justify-between items-center mb-2">
-              <p class="product-price">${product.price}</p>
-              <div class="flex items-center gap-2">
-                <button class="minus-btn bg-[#31487A] hover:bg-[#192338] rounded px-2 py-1 text-white font-semibold transition-colors">-</button>
-                <input type="number" class="quantity-input w-12 p-1 border border-[#8FB3E2] rounded text-center bg-[#1E2E4F] text-white focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]" value="1" min="1" max="99">
-                <button class="plus-btn bg-[#31487A] hover:bg-[#192338] rounded px-2 py-1 text-white font-semibold transition-colors">+</button>
-              </div>
-            </div>
-            <p class="text-xs opacity-70 mt-1">Brand: ${product.brand}</p>
-            <div class="product-actions flex gap-2 mt-3">
-              <button class="add-to-cart-btn py-2 px-3 bg-[#31487A] hover:bg-[#192338] rounded text-sm font-semibold transition-colors text-white flex-1">Add to Cart</button>
-              <button class="order-now-btn py-2 px-3 bg-green-600 hover:bg-green-700 rounded text-sm font-semibold transition-colors text-white flex-1">Order Now</button>
+  
+    prods.forEach(product => {
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">${product.name}</h3>
+          <div class="flex justify-between items-center mb-2">
+            <p class="product-price">${product.price}</p>
+            <div class="flex items-center gap-2">
+              <button class="minus-btn bg-[#31487A] hover:bg-[#192338] rounded px-2 py-1 text-white font-semibold transition-colors">-</button>
+              <input type="number" class="quantity-input w-12 p-1 border border-[#8FB3E2] rounded text-center bg-[#1E2E4F] text-white focus:outline-none focus:ring-2 focus:ring-[#D9E1F1]" value="1" min="1" max="99">
+              <button class="plus-btn bg-[#31487A] hover:bg-[#192338] rounded px-2 py-1 text-white font-semibold transition-colors">+</button>
             </div>
           </div>
-        `;
-        productsGrid.appendChild(productCard);
-      });
-      
-      // Add event listeners for buttons after rendering
-      addProductButtonListeners();
-    }
+          <p class="text-xs opacity-70 mt-1">Brand: ${product.brand}</p>
+          <div class="product-actions flex gap-2 mt-3">
+            <button class="add-to-cart-btn py-2 px-3 bg-[#31487A] hover:bg-[#192338] rounded text-sm font-semibold transition-colors text-white flex-1">Add to Cart</button>
+            <button class="order-now-btn py-2 px-3 bg-green-600 hover:bg-green-700 rounded text-sm font-semibold transition-colors text-white flex-1">Order Now</button>
+          </div>
+        </div>
+      `;
+      productsGrid.appendChild(productCard);
+    });
     
-    // Function to add event listeners to product buttons
-    function addProductButtonListeners() {
-      const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
-      const orderNowBtns = document.querySelectorAll('.order-now-btn');
-      const quantityInputs = document.querySelectorAll('.quantity-input');
-      const minusBtns = document.querySelectorAll('.minus-btn');
-      const plusBtns = document.querySelectorAll('.plus-btn');
-      
-      addToCartBtns.forEach((btn, index) => {
-        btn.addEventListener('click', (e) => {
-          const card = e.target.closest('.product-card');
-          const product = currentProducts.find(p => p.name === card.querySelector('.product-title').textContent);
-          const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
-          cart.push({ ...product, quantity });
-          alert(`${quantity} x ${product.name} added to cart! (Total items in cart: ${cart.length})`);
-          console.log('Cart updated:', cart);
-        });
-      });
-      
-      orderNowBtns.forEach((btn, index) => {
-        btn.addEventListener('click', (e) => {
-          const card = e.target.closest('.product-card');
-          const product = currentProducts.find(p => p.name === card.querySelector('.product-title').textContent);
-          const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
-          alert(`Ordering ${quantity} x ${product.name} now! Redirecting to checkout...`);
-          // In a real app, redirect to checkout page with product details
-          console.log('Order initiated:', { ...product, quantity });
-        });
-      });
-      
-      // Plus/Minus buttons
-      minusBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const input = e.target.nextElementSibling;
-          let val = parseInt(input.value) - 1;
-          if (val < 1) val = 1;
-          input.value = val;
-        });
-      });
-      
-      plusBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const input = e.target.previousElementSibling;
-          let val = parseInt(input.value) + 1;
-          if (val > 99) val = 99;
-          input.value = val;
-        });
-      });
-      
-      // Optional: Update quantity limits or validation
-      quantityInputs.forEach(input => {
-        input.addEventListener('change', (e) => {
-          if (e.target.value < 1) e.target.value = 1;
-          if (e.target.value > 99) e.target.value = 99;
-        });
-      });
-    }
+    // Add event listeners for buttons after rendering
+    addProductButtonListeners();
+  }
+  
+  // Function to add event listeners to product buttons
+  function addProductButtonListeners() {
+    const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
+    const orderNowBtns = document.querySelectorAll('.order-now-btn');
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const minusBtns = document.querySelectorAll('.minus-btn');
+    const plusBtns = document.querySelectorAll('.plus-btn');
     
-    // Initial render of all products
-    renderProducts(currentProducts);
-    
-    // Scroll to top after rendering to ensure header is visible
-    window.scrollTo(0, 0);
-    
-    // Search placeholder
-    if (searchInput) {
-      searchInput.placeholder = `Search ${type} products...`;
-      searchInput.value = ''; // Clear previous search
-    }
-    
-    // Brand filter functionality
-    if (brandList) {
-      const brandItems = brandList.querySelectorAll('.brand-item');
-      brandItems.forEach(item => {
-        item.addEventListener('click', () => {
-          const brand = item.dataset.brand;
-          const filteredProducts = currentProducts.filter(product => product.brand === brand);
-          renderProducts(filteredProducts);
-        
-          // Update active state
-          brandItems.forEach(b => b.classList.remove('active'));
-          item.classList.add('active');
-        });
+    addToCartBtns.forEach((btn, index) => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        const product = currentProducts.find(p => p.name === card.querySelector('.product-title').textContent);
+        const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
+        cart.push({ ...product, quantity });
+        alert(`${quantity} x ${product.name} added to cart! (Total items in cart: ${cart.length})`);
+        console.log('Cart updated:', cart);
       });
-      
-      // Add "All Brands" option
-      const allBrandsItem = document.createElement('li');
-      allBrandsItem.className = 'brand-item active';
-      allBrandsItem.textContent = 'All Brands';
-      allBrandsItem.addEventListener('click', () => {
-        renderProducts(currentProducts);
-        brandItems.forEach(b => b.classList.remove('active'));
-        allBrandsItem.classList.add('active');
-      });
-      brandList.insertBefore(allBrandsItem, brandList.firstChild);
-    }
+    });
     
-    // Toggle categories sidebar
-    if (categoriesToggle && categoriesSidebar && overlay && container) {
-      categoriesToggle.addEventListener('click', () => {
-        const isActive = categoriesSidebar.classList.contains('active');
-        categoriesSidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        container.classList.toggle('sidebar-open', !isActive);
+    orderNowBtns.forEach((btn, index) => {
+      btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.product-card');
+        const product = currentProducts.find(p => p.name === card.querySelector('.product-title').textContent);
+        const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
+        alert(`Ordering ${quantity} x ${product.name} now! Redirecting to checkout...`);
+        // In a real app, redirect to checkout page with product details
+        console.log('Order initiated:', { ...product, quantity });
       });
-      
-      // Close sidebar when clicking overlay
-      overlay.addEventListener('click', () => {
-        categoriesSidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        container.classList.remove('sidebar-open');
-      });
-    }
+    });
     
-    // Global search listener
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        let filteredProducts = currentProducts;
-      
-        if (searchTerm) {
-          filteredProducts = currentProducts.filter(product =>
-            product.name.toLowerCase().includes(searchTerm) ||
-            product.brand.toLowerCase().includes(searchTerm)
-          );
-        }
-      
+    // Plus/Minus buttons
+    minusBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const input = e.target.nextElementSibling;
+        let val = parseInt(input.value) - 1;
+        if (val < 1) val = 1;
+        input.value = val;
+      });
+    });
+    
+    plusBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const input = e.target.previousElementSibling;
+        let val = parseInt(input.value) + 1;
+        if (val > 99) val = 99;
+        input.value = val;
+      });
+    });
+    
+    // Optional: Update quantity limits or validation
+    quantityInputs.forEach(input => {
+      input.addEventListener('change', (e) => {
+        if (e.target.value < 1) e.target.value = 1;
+        if (e.target.value > 99) e.target.value = 99;
+      });
+    });
+  }
+  
+  // Initial render of all products
+  renderProducts(currentProducts);
+  
+  // Scroll to top after rendering to ensure header is visible
+  window.scrollTo(0, 0);
+  
+  // Search placeholder
+  if (searchInput) {
+    searchInput.placeholder = `Search ${type} products...`;
+    searchInput.value = ''; // Clear previous search
+  }
+  
+  // Brand filter functionality
+  if (brandList) {
+    const brandItems = brandList.querySelectorAll('.brand-item');
+    brandItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const brand = item.dataset.brand;
+        const filteredProducts = currentProducts.filter(product => product.brand === brand);
         renderProducts(filteredProducts);
+      
+        // Update active state
+        brandItems.forEach(b => b.classList.remove('active'));
+        item.classList.add('active');
       });
-    }
-    
-    AOS.refresh();
-  }
-
-  // Make initializeProductPage globally available
-  window.initializeProductPage = initializeProductPage;
-  
-  // Add smooth scroll for home page sections with state clearing
-  document.querySelectorAll('#home-page a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href').substring(1);
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-        // Clear page state when navigating within home page
-        clearPageState();
-      }
     });
-  });
-
-  // Your existing feedback form, signin, signup, profile, slideshow, mobile menu code...
-  // Keep all your existing code for these sections
-
-});
+    
+    // Add "All Brands" option
+    const allBrandsItem = document.createElement('li');
+    allBrandsItem.className = 'brand-item active';
+    allBrandsItem.textContent = 'All Brands';
+    allBrandsItem.addEventListener('click', () => {
+      renderProducts(currentProducts);
+      brandItems.forEach(b => b.classList.remove('active'));
+      allBrandsItem.classList.add('active');
+    });
+    brandList.insertBefore(allBrandsItem, brandList.firstChild);
+  }
+  
+  // Toggle categories sidebar
+  if (categoriesToggle && categoriesSidebar && overlay && container) {
+    categoriesToggle.addEventListener('click', () => {
+      const isActive = categoriesSidebar.classList.contains('active');
+      categoriesSidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+      container.classList.toggle('sidebar-open', !isActive);
+    });
+    
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', () => {
+      categoriesSidebar.classList.remove('active');
+      overlay.classList.remove('active');
+      container.classList.remove('sidebar-open');
+    });
+  }
+  
+  // Global search listener
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      let filteredProducts = currentProducts;
+    
+      if (searchTerm) {
+        filteredProducts = currentProducts.filter(product =>
+          product.name.toLowerCase().includes(searchTerm) ||
+          product.brand.toLowerCase().includes(searchTerm)
+        );
+      }
+    
+      renderProducts(filteredProducts);
+    });
+  }
+  
+  AOS.refresh();
+}
 
 // Function to load service cards
 function loadServiceCards() {
@@ -982,8 +945,7 @@ function loadServiceCards() {
         <h4 class="text-lg font-semibold accent mb-2">Tea</h4>
         <p class="text-sm">Premium tea varieties from the finest plantations.</p>
       </div>
-    `;
-    
+    `;    
     // Add event listeners to the newly loaded service cards
     setTimeout(() => {
       addServiceCardListeners();
@@ -992,39 +954,8 @@ function loadServiceCards() {
   }
 }
 
-// Global addServiceCardListeners function
-function addServiceCardListeners() {
-  const servicesGrid = document.querySelector('#services .grid');
-  if (servicesGrid) {
-    servicesGrid.addEventListener('click', function(e) {
-      const serviceCard = e.target.closest('.service-card');
-    
-      if (serviceCard) {
-        const product = serviceCard.getAttribute('data-product');
-        console.log('Service card clicked, product:', product);
-      
-        if (product) {
-          // Store the product type globally
-          window.currentProductType = product;
-          
-          // Show product page and save state
-          showPage('product-page', product);
-          
-          // Initialize the product page
-          if (typeof initializeProductPage === 'function') {
-            initializeProductPage(product);
-          }
-        
-          // Close mobile menu if open
-          const mobileMenu = document.getElementById('mobile-menu');
-          if (mobileMenu && mobileMenu.classList.contains('visible')) {
-            mobileMenu.classList.remove('visible');
-          }
-        }
-      }
-    });
-  }
-}
+// Make initializeProductPage globally available
+window.initializeProductPage = initializeProductPage;
 
 // Handle browser back/forward buttons
 window.addEventListener('popstate', function(event) {
@@ -1052,3 +983,304 @@ window.addEventListener('beforeunload', function() {
     savePageState('product-page', currentProductType);
   }
 });
+
+// Simple user authentication functions
+function signUpUser(name, email, password) {
+  // In a real app, this would send data to a server
+  // For demo purposes, we'll just store in localStorage
+  const user = {
+    name: name,
+    email: email,
+    password: password, // In real app, this should be hashed
+    createdAt: new Date().toISOString()
+  };
+  
+  localStorage.setItem('user_' + email, JSON.stringify(user));
+  return true;
+}
+
+function signInUser(email, password) {
+  // In a real app, this would verify with a server
+  const userData = localStorage.getItem('user_' + email);
+  
+  if (userData) {
+    const user = JSON.parse(userData);
+    if (user.password === password) {
+      return user;
+    }
+  }
+  return null;
+}
+
+function signOutUser() {
+  currentUser = null;
+  localStorage.removeItem('currentUser');
+  updateNavigation();
+}
+
+function updateNavigation() {
+  // Update navigation based on authentication status
+  const signInLink = document.querySelector('a[data-page="signin"]');
+  const signUpLink = document.querySelector('a[data-page="signup"]');
+  
+  if (currentUser) {
+    // User is signed in
+    if (signInLink) signInLink.textContent = 'Profile';
+    if (signInLink) signInLink.setAttribute('data-page', 'profile');
+    if (signUpLink) signUpLink.style.display = 'none';
+  } else {
+    // User is signed out
+    if (signInLink) signInLink.textContent = 'Sign In';
+    if (signInLink) signInLink.setAttribute('data-page', 'signin');
+    if (signUpLink) signUpLink.style.display = 'block';
+  }
+}
+
+// Document ready function
+document.addEventListener('DOMContentLoaded', function () {
+  // Check if there's a saved page state
+  const savedPage = localStorage.getItem('currentPage');
+  const savedProductType = localStorage.getItem('currentProductType');
+  
+  // Check if user is already signed in
+  const savedUser = localStorage.getItem('currentUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateNavigation();
+  }
+  
+  // Load service cards first
+  loadServiceCards();
+  
+  // Add event listeners to all navigation links
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', handleNavigation);
+  });
+
+  // Check for saved page state on load
+  if (savedPage && savedPage === 'product-page' && savedProductType) {
+    // Show product page with saved product type
+    currentProductType = savedProductType;
+    showPage('product-page', savedProductType);
+    initializeProductPage(savedProductType);
+  } else if (savedPage) {
+    // Show other saved page
+    showPage(savedPage);
+  } else {
+    // Default to home page
+    showPage('home-page');
+  }
+
+  // Mobile menu functionality
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', function() {
+      mobileMenu.classList.toggle('visible');
+    });
+  }
+
+  // Sign Up Form Handler
+  const signupForm = document.getElementById('signup-form');
+  if (signupForm) {
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(signupForm);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const password = formData.get('password');
+      const confirmPassword = formData.get('confirm-password');
+      
+      // Basic validation
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long!');
+        return;
+      }
+      
+      // Check if user already exists
+      if (localStorage.getItem('user_' + email)) {
+        alert('User with this email already exists!');
+        return;
+      }
+      
+      // Sign up user
+      if (signUpUser(name, email, password)) {
+        // Auto sign in after successful sign up
+        currentUser = { name, email };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateNavigation();
+        
+        // Show success message
+        const popup = document.getElementById('signup-success-popup');
+        if (popup) {
+          popup.classList.add('active');
+        }
+        
+        // Redirect to home after successful sign up
+        setTimeout(() => {
+          showPage('home-page');
+          if (popup) {
+            popup.classList.remove('active');
+          }
+        }, 2000);
+      }
+    });
+  }
+
+  // Sign In Form Handler
+  const signinForm = document.getElementById('signin-form');
+  if (signinForm) {
+    signinForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(signinForm);
+      const email = formData.get('email');
+      const password = formData.get('password');
+      
+      // Sign in user
+      const user = signInUser(email, password);
+      
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateNavigation();
+        
+        // Show success message
+        const popup = document.getElementById('signin-success-popup');
+        if (popup) {
+          popup.classList.add('active');
+        }
+        
+        // Redirect to home after successful sign in
+        setTimeout(() => {
+          showPage('home-page');
+          if (popup) {
+            popup.classList.remove('active');
+          }
+        }, 2000);
+      } else {
+        alert('Invalid email or password!');
+      }
+    });
+  }
+
+  // Logout Handler
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
+      signOutUser();
+      showPage('home-page');
+    });
+  }
+
+  // Profile Page Handler
+  if (currentUser) {
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    const profileAvatar = document.getElementById('profile-avatar');
+    
+    if (profileName) profileName.textContent = currentUser.name;
+    if (profileEmail) profileEmail.textContent = currentUser.email;
+    if (profileAvatar) {
+      // Create avatar from first letter of name
+      profileAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+    }
+  }
+
+  // Feedback Form Handler
+  const feedbackForm = document.getElementById('feedback-form');
+  if (feedbackForm) {
+    feedbackForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(feedbackForm);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const message = formData.get('message');
+      
+      // In a real app, this would send data to a server
+      console.log('Feedback submitted:', { name, email, message });
+      
+      // Show success message
+      const popup = document.getElementById('feedback-success-popup');
+      if (popup) {
+        popup.classList.add('active');
+      }
+      
+      // Reset form
+      feedbackForm.reset();
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        if (popup) {
+          popup.classList.remove('active');
+        }
+      }, 3000);
+    });
+  }
+
+  // Close popup handlers
+  const closeButtons = document.querySelectorAll('#feedback-close-popup, #signin-close-popup, #signup-close-popup');
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const popup = this.closest('.popup');
+      if (popup) {
+        popup.classList.remove('active');
+      }
+    });
+  });
+
+  // Add smooth scroll for home page sections with state clearing
+  document.querySelectorAll('#home-page a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+        // Clear page state when navigating within home page
+        clearPageState();
+      }
+    });
+  });
+
+  // Slideshow functionality
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.slide-dot');
+  const prevButton = document.querySelector('.prev');
+  const nextButton = document.querySelector('.next');
+
+  function showSlide(n) {
+    slides.forEach(slide => slide.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+    
+    currentSlide = (n + slides.length) % slides.length;
+    
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+
+  if (prevButton && nextButton) {
+    prevButton.addEventListener('click', () => showSlide(currentSlide - 1));
+    nextButton.addEventListener('click', () => showSlide(currentSlide + 1));
+  }
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => showSlide(index));
+  });
+
+  // Auto advance slides
+  setInterval(() => {
+    showSlide(currentSlide + 1);
+  }, 5000);
+});
+

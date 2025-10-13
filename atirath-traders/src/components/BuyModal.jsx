@@ -422,7 +422,7 @@ ${additionalInfo ? `- Additional Info: ${additionalInfo}` : ""}
 Thank you!`;
 
       window.open(
-        `https://wa.me/+919703744571?text=${encodeURIComponent(message)}`,
+        `https://wa.me/+917396007479?text=${encodeURIComponent(message)}`,
         "_blank"
       );
 

@@ -18,10 +18,11 @@ const About = () => {
           <div className="col-md-6" data-aos="fade-up">
             <h3 className="h1 fw-bold accent mb-3">Foundation</h3>
             <p className="lead opacity-90">
-              Atirath Traders India Pvt. Ltd. — a fast-growing, globally connected trading powerhouse founded in 2023 and
-              headquartered in Hyderabad, with a strategic presence in Guwahati and key international markets including
-              UAE, Oman, Africa, USA, and London. Emphasize our core focus on wholesale trading, import, and export of
-              high-demand categories: FMCG, agricultural commodities, Edible oils, and personal care products.
+              Atirath Traders India Pvt. Ltd. — a fast-growing, globally connected trading powerhouse founded in 2023 and headquartered 
+              in Hyderabad, Telangana, India, with a strategic presence in Guwahati, Assam, India, and key international markets 
+              including UAE, Oman, Africa, USA, and UK. 
+              We specialize in wholesale trading, import, and export of high-demand categories, including FMCG,
+              agricultural commodities, edible oils, and personal care products.
             </p>
           </div>
         </div>

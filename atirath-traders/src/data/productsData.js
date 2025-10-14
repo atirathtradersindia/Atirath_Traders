@@ -132,6 +132,7 @@ export const productsData = {
     { id: 10, name: "Giant Sunflower", brand: "sunflower", price: "₹350-700 per dozen", image: "https://images.unsplash.com/photo-1470509037663-253afd7f0f51?auto=format&fit=crop&w=800&q=80" }
   ],
   spices: [
+    // 🌶 COMMON SPICES
     { id: 1, name: "Ground Cumin", brand: "cumin", price: "₹200-300 per kg", image: "https://trupti.ca/cdn/shop/products/shutterstock_752658160_31781237-e366-4fd0-974b-195e4601c214_1200x1200.jpg?v=1600472387" },
     { id: 2, name: "Turmeric Powder", brand: "turmeric", price: "₹150-250 per kg", image: "https://m.media-amazon.com/images/I/51MV9JUTOIL._UF1000,1000_QL80_.jpg" },
     { id: 3, name: "Black Pepper", brand: "pepper", price: "₹300-400 per kg", image: "https://d3kgrlupo77sg7.cloudfront.net/media/chococoorgspice.com/images/products/coorg-black-pepper-powder-coorg-spices-shop-online.20240714001931.webp" },
@@ -141,8 +142,51 @@ export const productsData = {
     { id: 7, name: "Organic Turmeric", brand: "turmeric", price: "₹200-300 per kg", image: "https://www.viralspices.com/wp-content/uploads/2024/11/Untitled-1-624x312.jpg" },
     { id: 8, name: "White Pepper", brand: "pepper", price: "₹350-450 per kg", image: "https://www.urbangroc.com/wp-content/uploads/2021/05/White-Pepper-Powder.jpg" },
     { id: 9, name: "Ground Cinnamon", brand: "cinnamon", price: "₹450-650 per kg", image: "https://www.natureloc.com/image/cache/catalog/New%202022/cinnamon-powder-768x576-600x600.jpg" },
-    { id: 10, name: "Clove Powder", brand: "clove", price: "₹550-750 per kg", image: "https://m.media-amazon.com/images/I/41C09azNovL._UF894,1000_QL80_.jpg" }
+    { id: 10, name: "Clove Powder", brand: "clove", price: "₹550-750 per kg", image: "https://m.media-amazon.com/images/I/41C09azNovL._UF894,1000_QL80_.jpg" },
+    
+    // 🌿 HERBS & SEEDS
+    { id: 11, name: "Coriander Seeds", brand: "coriander", price: "₹150-200 per kg", image: "https://cdn2.stylecraze.com/wp-content/uploads/2013/05/7-Impressive-Benefits-Of-Coriander-Seeds-Boost-Heart-Health-Treat-Diabetes-And-More-jpg.jpg" },
+    { id: 12, name: "Coriander Powder", brand: "coriander", price: "₹160-220 per kg", image: "https://zamaorganics.com/cdn/shop/files/Untitled_design_27.jpg?v=1756906562&width=1080" },
+    { id: 13, name: "Mustard Seeds", brand: "mustard", price: "₹120-180 per kg", image: "https://img.thecdn.in/394829/MustardSeed_329c2107-12f1-4924-b1cd-8ba6a48c8dce-1725505801053.jpeg?width=600&format=webp" },
+    { id: 14, name: "Fenugreek Seeds (Methi)", brand: "methi", price: "₹100-150 per kg", image: "https://m.media-amazon.com/images/I/61Sag570CCL._UF1000,1000_QL80_.jpg" },
+    { id: 15, name: "Fennel Seeds (Saunf)", brand: "fennel", price: "₹200-300 per kg", image: "https://starindojapan.com/wp-content/uploads/2020/01/Fennel-Seeds-100-gm-Lucknowi-Saunf.png" },
+    { id: 16, name: "Bay Leaves", brand: "bayleaf", price: "₹250-350 per kg", image: "https://m.media-amazon.com/images/I/41YVB2S1R7L._UF1000,1000_QL80_.jpg" },
+    { id: 17, name: "Carom Seeds (Ajwain)", brand: "ajwain", price: "₹180-250 per kg", image: "https://m.media-amazon.com/images/I/51Sm64oJ1JL._UF1000,1000_QL80_.jpg" },
+    { id: 18, name: "Black Mustard Seeds", brand: "mustard", price: "₹130-200 per kg", image: "https://5.imimg.com/data5/KF/YK/MY-5665983/black-mustard-seeds.jpg" },
+    { id: 19, name: "Dry Curry Leaves", brand: "curry", price: "₹300-400 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2024/2/394397219/UL/FW/VU/19056109/71ztvsmkqzs-ac-uf1000-1000-ql80-500x500.jpg" },
+    { id: 20, name: "Kasuri Methi (Dried Fenugreek Leaves)", brand: "methi", price: "₹400-600 per kg", image: "https://elephantrunk.in/cdn/shop/products/KASTOORI-METHI-Dried-Fenugreek-leaves_dc23dbe9-85f1-4eef-9667-9ad4947da846.jpg?v=1713516636" },
+    { id: 21, name: "Dry Mint Leaves", brand: "mint", price: "₹300-450 per kg", image: "https://5.imimg.com/data5/TP/VR/DT/ANDROID-56903532/product-jpeg-500x500.jpeg" },
+    
+    // 🌶 CHILLI & HEAT SPICES
+    { id: 22, name: "Red Chilli Powder", brand: "chilli", price: "₹250-350 per kg", image: "https://flourworks.in/wp-content/uploads/2023/07/RedChilliBoth-03_1500x.webp" },
+    { id: 23, name: "Dried Red Chillies", brand: "chilli", price: "₹220-300 per kg", image: "https://m.media-amazon.com/images/I/61zXH1Zp-TL.UF1000,1000_QL80.jpg" },
+    
+    // 💎 PREMIUM SPICES
+    { id: 24, name: "Cardamom (Green Elaichi)", brand: "cardamom", price: "₹1600-2000 per kg", image: "https://m.media-amazon.com/images/I/51E+TDU4ZwL.UF894,1000_QL80.jpg" },
+    { id: 25, name: "Cardamom Powder", brand: "cardamom", price: "₹1700-2100 per kg", image: "https://rukminim2.flixcart.com/image/480/640/kusph8w0/spice-masala/w/b/o/10-cardamom-powder-elaichi-powder-10-g-1-pouch-chatokde-powder-original-imag7ucfe23n2phb.jpeg?q=90" },
+    { id: 26, name: "Nutmeg (Jaiphal)", brand: "nutmeg", price: "₹800-1000 per kg", image: "https://satvyk.com/cdn/shop/files/Nutmeg.png?v=1745320517" },
+    { id: 27, name: "Mace (Javitri)", brand: "mace", price: "₹1000-1300 per kg", image: "https://5.imimg.com/data5/JX/AF/MY-44987491/mace-javitri-500x500.jpg" },
+    { id: 28, name: "Star Anise", brand: "anise", price: "₹900-1200 per kg", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWIKWrmPzE7EgZ2erTA61z6qWKGbnDzsEiKw&s" },
+    { id: 29, name: "Black Cardamom (Badi Elaichi)", brand: "cardamom", price: "₹800-1000 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2023/6/319583908/VI/ID/KH/182306611/black-cardamom-badi-elaichi-1kg-500x500.png" },
+    { id: 30, name: "Saffron (Kesar)", brand: "saffron", price: "₹2000-3000 per 10g", image: "https://d3kgrlupo77sg7.cloudfront.net/media/chococoorgspice.com/images/products/premium-kashmiri-saffron-1g-100-pure-grade-1-kesar-from.20240409012247.webp" },
+    { id: 31, name: "Black Cumin (Shahi Jeera)", brand: "cumin", price: "₹500-700 per kg", image: "https://m.media-amazon.com/images/I/516B1BwcoVL.UF894,1000_QL80.jpg" },
+    { id: 32, name: "Poppy Seeds (Khus Khus)", brand: "poppy", price: "₹1500-1800 per kg", image: "https://elephantrunk.in/cdn/shop/products/POPPY-SEED_cbd60877-73d7-4a52-83f9-a84d6bf28ef3.jpg?v=1713516730" },
+    
+    // 🧂 SALTS & ACIDS
+    { id: 33, name: "Rock Salt (Sendha Namak)", brand: "salt", price: "₹60-100 per kg", image: "https://5.imimg.com/data5/WU/IO/MY-5087242/premium-quality-sendha-namak-500x500.jpg" },
+    { id: 34, name: "Black Salt (Kala Namak)", brand: "salt", price: "₹70-120 per kg", image: "https://www.prodottidisano.it/wp-content/uploads/2020/06/Sale-nero-Hawaii-1.jpg" },
+    { id: 35, name: "Tamarind (Imli)", brand: "tamarind", price: "₹150-220 per kg", image: "https://weaveskart.com/wp-content/uploads/2023/05/Finest-quality-of-Fresh-_-Organically-grown-Tamarind-Imli-2-1.jpg" },
+    { id: 36, name: "Dry Mango Powder (Amchur)", brand: "mango", price: "₹400-550 per kg", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ9TIPMDDXf_aBw0wXlULbFbg420bBoia2Dg&s" },
+    
+    // 🧄 GARLIC & ONION
+    { id: 37, name: "Garlic Powder", brand: "garlic", price: "₹300-400 per kg", image: "https://dailyfarmer.in/cdn/shop/articles/SEOon_garlic-powder-cloves-feature_25ab90b2-f5c4-4346-b10c-26af5ef5d51f.jpg?v=1744262375" },
+    { id: 38, name: "Onion Powder", brand: "onion", price: "₹250-350 per kg", image: "https://m.media-amazon.com/images/I/61S8+Dta88L.UF1000,1000_QL80.jpg" },
+    
+    // 🍃 GINGER & SPECIALTY
+    { id: 39, name: "Dry Ginger Powder", brand: "ginger", price: "₹250-350 per kg", image: "https://m.media-amazon.com/images/I/613gdZIEm2L.UF894,1000_QL80.jpg" },
+    { id: 40, name: "Asafoetida (Hing)", brand: "asafoetida", price: "₹1500-2000 per kg", image: "https://www.simhas.in/image/cache/catalog/products/asafoetida/_DSC0194-647x400.png" }
   ],
+
   clothing: [
     { id: 1, name: "Men's T-Shirt", brand: "men", price: "₹500-1,000", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80" },
     { id: 2, name: "Women's Dress", brand: "women", price: "₹1,000-3,000", image: "https://images.unsplash.com/photo-1598535915912-e467d3e1f1f9?auto=format&fit=crop&w=800&q=80" },
@@ -180,22 +224,48 @@ export const productsData = {
     { id: 10, name: "Silver Needle White", brand: "white", price: "₹700-1,100 per kg", image: "https://images.unsplash.com/photo-1498673394965-35cb14994a81?auto=format&fit=crop&w=800&q=80" }
   ],
   pulses: [
+    // 🌾 DALS
     { id: 1, name: "Toor Dal (Arhar Dal)", brand: "dal", price: "₹120-140 per kg", image: "https://chakkiwalle.com/cdn/shop/files/1588344248_toor-dal.jpg?v=1708599736" },
     { id: 2, name: "Moong Dal", brand: "dal", price: "₹130-150 per kg", image: "https://vibrantliving.in/cdn/shop/files/MoongDalSplitSkinless.jpg?v=1731059585&width=2048" },
     { id: 3, name: "Chana Dal", brand: "dal", price: "₹110-130 per kg", image: "https://5.imimg.com/data5/OH/JO/JM/SELLER-9632007/chana-dal-500x500.jpg" },
     { id: 4, name: "Masoor Dal", brand: "dal", price: "₹100-120 per kg", image: "https://gonefarmers.com/cdn/shop/products/image_cc51f8bf-501f-4ae7-a546-3a579299ca9d_grande.jpg?v=1596652176" },
     { id: 5, name: "Urad Dal", brand: "dal", price: "₹140-160 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2023/5/307714999/OW/ZQ/ZW/163360758/urad-dal-500x500.jpg" },
-    { id: 6, name: "Whole Moong", brand: "whole", price: "₹90-110 per kg", image: "https://m.media-amazon.com/images/I/51s0SMY-S-L._UF894,1000_QL80_.jpg" },
-    { id: 7, name: "Whole Chana", brand: "whole", price: "₹80-100 per kg", image: "https://m.media-amazon.com/images/I/51jyhTCV3bS.jpg" },
-    { id: 8, name: "Rajma (Kidney Beans)", brand: "whole", price: "₹150-170 per kg", image: "https://twobrothersindiashop.com/cdn/shop/articles/benefits-of-rajma.png?v=1691755459&width=1024" },
-    { id: 9, name: "Kabuli Chana", brand: "whole", price: "₹120-140 per kg", image: "https://5.imimg.com/data5/RH/DH/MY-5114135/kabuli-chana.jpg" },
-    { id: 10, name: "Matki (Moth Beans)", brand: "whole", price: "₹100-120 per kg", image: "https://www.greendna.in/cdn/shop/products/moth2_594x.jpg?v=1591178564" },
-    { id: 11, name: "Mixed Dal", brand: "dal", price: "₹125-145 per kg", image: "https://www.jiomart.com/images/product/original/491187301/good-life-dal-mix-1-kg-product-images-o491187301-p491187301-2-202203170748.jpg?im=Resize=(1000,1000)" },
-    { id: 12, name: "Green Moong", brand: "whole", price: "₹95-115 per kg", image: "https://i0.wp.com/uzhavuorganic.com/wp-content/uploads/2021/05/organic-gren-moong-dal.png?fit=300%2C260&ssl=1" },
-    { id: 13, name: "Black Chana", brand: "whole", price: "₹85-105 per kg", image: "https://ayuvya.com/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Fayuvya_images%2Fblog_image%2FGuide_On_Black_Chana_Protein_and_Nutrition_Value_You_Must_Explore.webp&w=1080&q=75" },
-    { id: 14, name: "White Chana", brand: "whole", price: "₹75-95 per kg", image: "https://m.media-amazon.com/images/I/71t+BVVqEbL._UF894,1000_QL80_.jpg" },
-    { id: 15, name: "Masoor Whole", brand: "whole", price: "₹85-105 per kg", image: "https://bajarhaat.com/wp-content/uploads/2024/06/Whole-Masoor-Dal.jpg" }
-  ]
+    { id: 6, name: "Mixed Dal", brand: "dal", price: "₹125-145 per kg", image: "https://www.jiomart.com/images/product/original/491187301/good-life-dal-mix-1-kg-product-images-o491187301-p491187301-2-202203170748.jpg?im=Resize=(1000,1000)" },
+    { id: 7, name: "Masoor Malka Dal (Red Lentils Split)", brand: "dal", price: "₹115-135 per kg", image: "https://www.nafedbazaar.com/wp-content/uploads/2021/03/Malka-Red-1kg-3-1.jpg" },
+    { id: 8, name: "Green Gram Split (Moong Chilka)", brand: "dal", price: "₹125-145 per kg", image: "https://vibrantliving.in/cdn/shop/files/HeirloomPilliPesalu_MoongDalSplitwithSkin.png?v=1731059411&width=2048" },
+    { id: 9, name: "Yellow Moong Dal (Polished)", brand: "dal", price: "₹130-150 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2024/3/402049066/GC/XH/UC/65875104/organic-yellow-moong-dal-500x500.jpg" },
+    { id: 10, name: "Urad Chilka Dal (Split Black Gram)", brand: "dal", price: "₹130-150 per kg", image: "https://5.imimg.com/data5/ECOM/Default/2022/8/HI/FW/RE/18785016/urad-dal-chilka-605198-500x500.jpg" },
+    { id: 11, name: "Chilka Toor Dal", brand: "dal", price: "₹125-145 per kg", image: "https://2.wlimg.com/product_images/bc-full/2024/5/12822418/watermark/urad-chilka-dal-1712659334-7376721.jpeg" },
+    { id: 12, name: "Lobia Dal (Black Eyed Bean Split)", brand: "dal", price: "₹110-130 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2022/9/NY/HS/YP/101792284/black-eyes-lobia-beans-250x250.jpg" },
+    { id: 13, name: "Horse Gram (Kulthi Dal)", brand: "dal", price: "₹90-110 per kg", image: "https://images-eu.ssl-images-amazon.com/images/I/81wYvs9mgkL.AC_UL210_SR210,210.jpg" },
+    { id: 14, name: "Peas Dal (Matar Dal)", brand: "dal", price: "₹95-115 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2023/9/341718376/JB/TJ/WU/11683143/organic-toor-dal-1-500x500.jpeg" },
+    { id: 15, name: "Bengal Gram Dal (Desi Chana Dal)", brand: "dal", price: "₹120-140 per kg", image: "https://5.imimg.com/data5/NG/SF/MY-12683566/bengal-gram-dal.jpg" },
+    { id: 16, name: "Black Masoor Dal", brand: "dal", price: "₹115-135 per kg", image: "https://5.imimg.com/data5/FA/EX/MY-13113171/pulses.jpg" },
+
+    // 🌰 WHOLE VARIETIES
+    { id: 17, name: "Whole Moong", brand: "whole", price: "₹90-110 per kg", image: "https://m.media-amazon.com/images/I/51s0SMY-S-L.UF894,1000_QL80.jpg" },
+    { id: 18, name: "Whole Chana", brand: "whole", price: "₹80-100 per kg", image: "https://m.media-amazon.com/images/I/51jyhTCV3bS.jpg" },
+    { id: 19, name: "Rajma (Kidney Beans)", brand: "whole", price: "₹150-170 per kg", image: "https://twobrothersindiashop.com/cdn/shop/articles/benefits-of-rajma.png?v=1691755459&width=1024" },
+    { id: 20, name: "Kabuli Chana", brand: "whole", price: "₹120-140 per kg", image: "https://5.imimg.com/data5/RH/DH/MY-5114135/kabuli-chana.jpg" },
+    { id: 21, name: "Matki (Moth Beans)", brand: "whole", price: "₹100-120 per kg", image: "https://www.greendna.in/cdn/shop/products/moth2_594x.jpg?v=1591178564" },
+    { id: 22, name: "Green Moong", brand: "whole", price: "₹95-115 per kg", image: "https://i0.wp.com/uzhavuorganic.com/wp-content/uploads/2021/05/organic-gren-moong-dal.png?fit=300%2C260&ssl=1" },
+    { id: 23, name: "Black Chana", brand: "whole", price: "₹85-105 per kg", image: "https://ayuvya.com/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Fayuvya_images%2Fblog_image%2FGuide_On_Black_Chana_Protein_and_Nutrition_Value_You_Must_Explore.webp&w=1080&q=75" },
+    { id: 24, name: "White Chana", brand: "whole", price: "₹75-95 per kg", image: "https://m.media-amazon.com/images/I/71t+BVVqEbL.UF894,1000_QL80.jpg" },
+    { id: 25, name: "Masoor Whole", brand: "whole", price: "₹85-105 per kg", image: "https://bajarhaat.com/wp-content/uploads/2024/06/Whole-Masoor-Dal.jpg" },
+    { id: 26, name: "Green Peas Whole", brand: "whole", price: "₹80-100 per kg", image: "https://agtfoods.co.za/wp-content/uploads/2018/06/Whole-Green-Peas_600x600_1-1.jpg" },
+    { id: 27, name: "Brown Chana Whole", brand: "whole", price: "₹85-105 per kg", image: "https://m.media-amazon.com/images/I/51phpmtYZcL.UF894,1000_QL80.jpg" },
+    { id: 28, name: "Lobia (Black Eyed Beans)", brand: "whole", price: "₹100-120 per kg", image: "https://m.media-amazon.com/images/I/51dx-mEiF2L.UF894,1000_QL80.jpg" },
+    { id: 29, name: "Moth Beans Whole (Matki)", brand: "whole", price: "₹95-115 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2021/5/SE/OM/SU/44009489/moth-bean-500x500.jpg" },
+    { id: 30, name: "Kulthi Whole (Horse Gram)", brand: "whole", price: "₹90-110 per kg", image: "https://www.sirimart.in/wp-content/uploads/2020/09/Kulathi_Horsegram_Cowpea_Ulavalu_Huruli.jpg" },
+    { id: 31, name: "Whole Urad (Black Gram Whole)", brand: "whole", price: "₹100-120 per kg", image: "https://5.imimg.com/data5/IE/HP/MY-53084573/black-gram-28black-urad-29.jpg" },
+    { id: 32, name: "Whole Rajma Chitra", brand: "whole", price: "₹160-180 per kg", image: "https://m.media-amazon.com/images/I/41URkzMwZ6S.UF894,1000_QL80.jpg" },
+    { id: 33, name: "Whole Rajma Jammu", brand: "whole", price: "₹150-170 per kg", image: "https://biobasics.org/cdn/shop/files/buy-organic-jammu-rajma-online-at-bio-basics.png?v=1755700226" },
+    { id: 34, name: "Whole Masoor Black", brand: "whole", price: "₹95-115 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2024/2/393847203/CJ/YJ/DG/202750922/organic-black-masoor-dal.jpeg" },
+    { id: 35, name: "Whole Green Gram Desi", brand: "whole", price: "₹100-120 per kg", image: "https://5.imimg.com/data5/EU/CE/MY-6783187/moong-whole-28green-gram-29-500x500.png" },
+    { id: 36, name: "Dry Peas White", brand: "whole", price: "₹85-105 per kg", image: "https://5.imimg.com/data5/SELLER/Default/2024/12/476376995/DP/IG/UI/146632251/white-peas-dry-500x500.jpg" },
+    { id: 37, name: "Dry Peas Yellow", brand: "whole", price: "₹90-110 per kg", image: "https://www.aivaproducts.com/cdn/shop/products/ProductImage1WholeDriedYellowPeas_Large_94aacf0d-9e24-483a-8e7c-78e510f13935_1024x1024.jpg?v=1634243383" },
+    { id: 38, name: "Field Beans (Val)", brand: "whole", price: "₹110-130 per kg", image: "https://food.fnr.sndimg.com/content/dam/images/food/fullset/2013/2/25/1/YW0210H_Baby-Lima-Beans_s4x3.jpg.rend.hgtvcom.1280.1280.suffix/1371614348577.webp" },
+  ]
 };
 
 export const brandsData = {

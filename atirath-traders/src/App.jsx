@@ -8,6 +8,7 @@ import Services from './components/Services';
 import Feedback from './components/Feedback';
 import Footer from './components/Footer';
 import ProductPage from './components/ProductPage';
+import AllProducts from './components/AllProducts';
 import { SignIn, SignUp } from './components/AuthPages';
 import Profile from './components/Profile';
 
@@ -16,6 +17,8 @@ function App() {
   const [currentProductType, setCurrentProductType] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [showAuthForm, setShowAuthForm] = useState(null); // 'signin', 'signup', or null
+  const [fromAllProducts, setFromAllProducts] = useState(false);
+  const [preFilledEmail, setPreFilledEmail] = useState(''); // For auto-filling email after signup
 
   useEffect(() => {
     // Initialize AOS
@@ -27,9 +30,6 @@ function App() {
       setCurrentUser(JSON.parse(savedUser));
     }
     
-    // REMOVED: Loading saved page state
-    // Always start on home page regardless of previous session
-
     // Handle hash URL navigation
     const handleHashChange = () => {
       if (window.location.hash && currentPage === 'home') {
@@ -62,19 +62,26 @@ function App() {
     }
   };
 
-  const handleNavigate = (page, productType = null) => {
+  const handleNavigate = (page, productType = null, options = {}) => {
+    console.log('Navigating to:', page, 'with product:', productType, 'options:', options);
     setCurrentPage(page);
     setShowAuthForm(null); // Hide auth forms when navigating to other pages
     
+    // Set fromAllProducts flag based on navigation context
+    if (options.fromAllProducts !== undefined) {
+      setFromAllProducts(options.fromAllProducts);
+    } else if (page === 'all-products') {
+      // When going to all-products, reset the flag
+      setFromAllProducts(false);
+    }
+    
     if (page === 'product' && productType) {
       setCurrentProductType(productType);
-      // REMOVED: localStorage saving for page state
     } else if (page === 'home') {
       setCurrentProductType(null);
-      // REMOVED: localStorage clearing for page state
+      setFromAllProducts(false); // Reset flag when going home
     } else {
       setCurrentProductType(null);
-      // REMOVED: localStorage saving for page state
     }
     
     window.scrollTo(0, 0);
@@ -89,8 +96,18 @@ function App() {
     }
   };
 
-  const handleServiceClick = (productType) => {
-    handleNavigate('product', productType);
+  const handleServiceClick = (productType, context = {}) => {
+    console.log('Service clicked:', productType, 'context:', context);
+    
+    // Determine if we're coming from AllProducts
+    const fromAllProducts = context.fromAllProducts || currentPage === 'all-products';
+    
+    handleNavigate('product', productType, { fromAllProducts });
+  };
+
+  const handleViewAllClick = () => {
+    console.log('View All clicked - navigating to all-products');
+    handleNavigate('all-products');
   };
 
   const handleSignIn = (user) => {
@@ -100,16 +117,17 @@ function App() {
     
     setTimeout(() => {
       alert('Sign in successful! Welcome back!');
+      handleNavigate('home'); // Navigate to home after successful sign in
     }, 100);
   };
 
-  const handleSignUp = (user) => {
-    setCurrentUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    setShowAuthForm(null);
+  const handleSignUp = (user, email) => {
+    // After successful sign up, show sign in form with pre-filled email
+    setPreFilledEmail(email);
+    setShowAuthForm('signin');
     
     setTimeout(() => {
-      alert('Sign up successful! Welcome!');
+      alert('Sign up successful! Please sign in with your credentials.');
     }, 100);
   };
 
@@ -121,9 +139,13 @@ function App() {
 
   const closeAuthForm = () => {
     setShowAuthForm(null);
+    setPreFilledEmail(''); // Reset pre-filled email when closing auth form
   };
 
   const renderCurrentPage = () => {
+    console.log('Current page:', currentPage);
+    console.log('From AllProducts:', fromAllProducts);
+    
     switch (currentPage) {
       case 'home':
         return (
@@ -131,7 +153,11 @@ function App() {
             <Hero />
             <About id="about" />
             <Leadership id="leadership" />
-            <Services id="services" onServiceClick={handleServiceClick} />
+            <Services 
+              id="services" 
+              onServiceClick={handleServiceClick}
+              onViewAllClick={handleViewAllClick}
+            />
             <Feedback id="feedback" />
             <Footer id="contact" />
           </div>
@@ -140,6 +166,14 @@ function App() {
         return (
           <ProductPage 
             productType={currentProductType} 
+            onNavigate={handleNavigate}
+            fromAllProducts={fromAllProducts}
+          />
+        );
+      case 'all-products':
+        return (
+          <AllProducts 
+            onProductClick={(productType) => handleServiceClick(productType, { fromAllProducts: true })}
             onNavigate={handleNavigate}
           />
         );
@@ -159,7 +193,11 @@ function App() {
             <Hero />
             <About id="about" />
             <Leadership id="leadership" />
-            <Services id="services" onServiceClick={handleServiceClick} />
+            <Services 
+              id="services" 
+              onServiceClick={handleServiceClick}
+              onViewAllClick={handleViewAllClick}
+            />
             <Feedback id="feedback" />
             <Footer id="contact" />
           </div>
@@ -175,13 +213,14 @@ function App() {
         <div className="auth-form-container">
           {showAuthForm === 'signin' ? (
             <SignIn 
-              onNavigate={handleNavigate}
+              onNavigate={setShowAuthForm} // Use setShowAuthForm to switch between signin/signup
               onSignIn={handleSignIn}
               onClose={closeAuthForm}
+              preFilledEmail={preFilledEmail}
             />
           ) : (
             <SignUp 
-              onNavigate={handleNavigate}
+              onNavigate={setShowAuthForm} // Use setShowAuthForm to switch between signin/signup
               onSignUp={handleSignUp}
               onClose={closeAuthForm}
             />

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
-const SignIn = ({ onNavigate, onSignIn, onClose }) => {
+const SignIn = ({ onNavigate, onSignIn, onClose, preFilledEmail = '' }) => {
   const [formData, setFormData] = useState({
-    email: '',
+    email: preFilledEmail,
     password: ''
   });
 
@@ -144,7 +144,7 @@ const SignUp = ({ onNavigate, onSignUp, onClose }) => {
       name: formData.name,
       email: formData.email
     };
-    onSignUp(user);
+    onSignUp(user, formData.email);
   };
 
   return (

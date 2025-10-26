@@ -21,8 +21,7 @@ const About = () => {
               Atirath Traders India Pvt. Ltd. — a fast-growing, globally connected trading powerhouse founded in 2023 and headquartered 
               in Hyderabad, Telangana, India, with a strategic presence in Guwahati, Assam, India, and key international markets 
               including UAE, Oman, Africa, USA, and UK. 
-              We specialize in wholesale trading, import, and export of high-demand categories, including FMCG,
-              agricultural commodities, edible oils, and personal care products.
+              We specialize in wholesale trading, import, and export of high-demand categories, including FMCG, agricultural commodities, edible oils, and personal care products.
             </p>
           </div>
         </div>

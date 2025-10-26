@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Services = ({ onServiceClick, onViewAllClick }) => {
-  const services = [
+const AllProducts = ({ onProductClick, onNavigate }) => {
+  const allProducts = [
     {
       name: "Edible Oil Refining",
       product: "oil",
@@ -35,7 +35,7 @@ const Services = ({ onServiceClick, onViewAllClick }) => {
     {
       name: "Vegetables",
       product: "vegetables",
-      image: "https://www.bhg.com/thmb/Mwd_YEkDbVg_fPsUDcWr3eZk9W0=/5645x0/filters:no_upscale():strip_icc()/difference-between-fruits-vegetables-01-5f92e7ec706b463287bcfb46985698f9.jpg",
+      image: "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_1097,h_617/c_fill,w_720,ar_16:9,f_auto,q_auto,g_auto/shape/cover/sport/643188-gettyimages-153946385-ca1ccfaad9be44325afc434b305adc0d.jpg",
       description: "Fresh and organic vegetables for healthy living."
     },
     {
@@ -94,81 +94,78 @@ const Services = ({ onServiceClick, onViewAllClick }) => {
     }
   ];
 
-  // Show only first 6 products initially
-  const initialServices = services.slice(0, 6);
-
-  const handleServiceClick = (productType) => {
-    console.log('Service card clicked:', productType);
-    if (onServiceClick) {
-      onServiceClick(productType);
+  const handleProductClick = (productType) => {
+    console.log('All products - product clicked:', productType);
+    if (onProductClick) {
+      onProductClick(productType);
     }
   };
 
-  const handleViewAllClick = () => {
-    console.log('View All button clicked');
-    if (onViewAllClick) {
-      onViewAllClick();
+  const handleBackClick = () => {
+    console.log('Back button clicked - going to home');
+    if (onNavigate) {
+      onNavigate('home');
     }
   };
 
   return (
-    <section id="services" className="py-5 px-3">
+    <section className="all-products-page">
       <div className="container">
-        <h3 className="h2 fw-bold text-center accent mb-5" data-aos="zoom-in">Our Products</h3>
+        {/* Back Button */}
+        <button 
+          className="back-button"
+          onClick={handleBackClick}
+          title="Back to Home"
+        >
+          ←
+        </button>
+
+        <h1 className="h2 fw-bold text-center accent mb-5">All Products</h1>
+        
         <div className="row g-4">
-          {initialServices.map((service, index) => (
+          {allProducts.map((product, index) => (
             <div 
               key={index} 
-              className="col-6 col-md-4 col-lg-3 col-xl-2"
+              className="col-6 col-md-4 col-lg-3"
               data-aos="fade-up" 
-              data-aos-delay={index % 6 * 100}
+              data-aos-delay={index % 4 * 100}
             >
               <div 
                 className="service-card glass p-3 text-center h-100"
-                onClick={() => handleServiceClick(service.product)}
+                onClick={() => handleProductClick(product.product)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="service-icon-container">
                   <div className="service-icon-cube">
                     <div className="service-icon-face service-icon-front">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                     <div className="service-icon-face service-icon-back">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                     <div className="service-icon-face service-icon-top">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                     <div className="service-icon-face service-icon-bottom">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                     <div className="service-icon-face service-icon-left">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                     <div className="service-icon-face service-icon-right">
-                      <img src={service.image} alt={service.name} />
+                      <img src={product.image} alt={product.name} />
                     </div>
                   </div>
                 </div>
-                <h4 className="h6 fw-semibold accent mb-2">{service.name}</h4>
-                <p className="small mb-0">{service.description}</p>
+                <h4 className="h6 fw-semibold accent mb-2">{product.name}</h4>
+                <p className="small mb-0">{product.description}</p>
               </div>
             </div>
           ))}
-        </div>
-        
-        {/* View All Button */}
-        <div className="text-center mt-5" data-aos="fade-up">
-          <button 
-            className="btn btn-primary btn-lg px-5"
-            onClick={handleViewAllClick}
-          >
-            View All Products
-          </button>
         </div>
       </div>
     </section>
   );
 };
 
-export default Services;
+export default AllProducts;

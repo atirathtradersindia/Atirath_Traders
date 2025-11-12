@@ -23,11 +23,7 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
   const [quantityPrice, setQuantityPrice] = useState("0.00");
   const [totalPrice, setTotalPrice] = useState("0.00");
   const [currency, setCurrency] = useState("INR");
-  const [customLogoRequired, setCustomLogoRequired] = useState("");
-  const [customLogoFile, setCustomLogoFile] = useState(null);
-  const [logoUploading, setLogoUploading] = useState(false);
-  const [logoPrice, setLogoPrice] = useState("0.00");
-  const [finalTotalPrice, setFinalTotalPrice] = useState("0.00");
+  const [logoRequired, setLogoRequired] = useState("");
   const [shippingCost, setShippingCost] = useState("0.00");
   const [insuranceCost, setInsuranceCost] = useState("0.00");
   const [taxes, setTaxes] = useState("0.00");
@@ -35,9 +31,9 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
   const [exchangeRates, setExchangeRates] = useState({});
   const [isLoadingRates, setIsLoadingRates] = useState(false);
   const [baseProductPrice, setBaseProductPrice] = useState("0.00");
+  const [customQuantity, setCustomQuantity] = useState("");
   
   const modalRef = useRef(null);
-  const fileInputRef = useRef(null);
   const formContainerRef = useRef(null);
   const estimateContainerRef = useRef(null);
 
@@ -102,202 +98,202 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
     
     const quantityOptionsByType = {
       oil: [
-        { value: "5", label: "5 Liters", multiplier: 5 },
-        { value: "10", label: "10 Liters", multiplier: 10 },
-        { value: "25", label: "25 Liters", multiplier: 25 },
-        { value: "50", label: "50 Liters", multiplier: 50 },
-        { value: "100", label: "100 Liters", multiplier: 100 },
-        { value: "500", label: "500 Liters", multiplier: 500 },
-        { value: "1000", label: "1,000 Liters", multiplier: 1000 },
-        { value: "5000", label: "5,000 Liters", multiplier: 5000 },
-        { value: "10000", label: "10,000 Liters", multiplier: 10000 },
-        { value: "25000", label: "25,000 Liters", multiplier: 25000 },
-        { value: "50000", label: "50,000 Liters", multiplier: 50000 },
-        { value: "100000", label: "100,000 Liters", multiplier: 100000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "5", label: "5 Liters", multiplier: 5, unit: "liters" },
+        { value: "10", label: "10 Liters", multiplier: 10, unit: "liters" },
+        { value: "25", label: "25 Liters", multiplier: 25, unit: "liters" },
+        { value: "50", label: "50 Liters", multiplier: 50, unit: "liters" },
+        { value: "100", label: "100 Liters", multiplier: 100, unit: "liters" },
+        { value: "500", label: "500 Liters", multiplier: 500, unit: "liters" },
+        { value: "1000", label: "1,000 Liters", multiplier: 1000, unit: "liters" },
+        { value: "5000", label: "5,000 Liters", multiplier: 5000, unit: "liters" },
+        { value: "10000", label: "10,000 Liters", multiplier: 10000, unit: "liters" },
+        { value: "25000", label: "25,000 Liters", multiplier: 25000, unit: "liters" },
+        { value: "50000", label: "50,000 Liters", multiplier: 50000, unit: "liters" },
+        { value: "100000", label: "100,000 Liters", multiplier: 100000, unit: "liters" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "liters" }
       ],
       
       rice: [
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "500", label: "500 Kg", multiplier: 500 },
-        { value: "1000", label: "1 Ton", multiplier: 1000 },
-        { value: "5000", label: "5 Tons", multiplier: 5000 },
-        { value: "10000", label: "10 Tons", multiplier: 10000 },
-        { value: "25000", label: "25 Tons", multiplier: 25000 },
-        { value: "50000", label: "50 Tons", multiplier: 50000 },
-        { value: "100000", label: "100 Tons", multiplier: 100000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "500", label: "500 Kg", multiplier: 500, unit: "kg" },
+        { value: "1000", label: "1 Ton", multiplier: 1000, unit: "kg" },
+        { value: "5000", label: "5 Tons", multiplier: 5000, unit: "kg" },
+        { value: "10000", label: "10 Tons", multiplier: 10000, unit: "kg" },
+        { value: "25000", label: "25 Tons", multiplier: 25000, unit: "kg" },
+        { value: "50000", label: "50 Tons", multiplier: 50000, unit: "kg" },
+        { value: "100000", label: "100 Tons", multiplier: 100000, unit: "kg" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       pulses: [
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "500", label: "500 Kg", multiplier: 500 },
-        { value: "1000", label: "1 Ton", multiplier: 1000 },
-        { value: "5000", label: "5 Tons", multiplier: 5000 },
-        { value: "10000", label: "10 Tons", multiplier: 10000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "500", label: "500 Kg", multiplier: 500, unit: "kg" },
+        { value: "1000", label: "1 Ton", multiplier: 1000, unit: "kg" },
+        { value: "5000", label: "5 Tons", multiplier: 5000, unit: "kg" },
+        { value: "10000", label: "10 Tons", multiplier: 10000, unit: "kg" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       spices: [
-        { value: "1", label: "1 Kg", multiplier: 1 },
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "500", label: "500 Kg", multiplier: 500 },
-        { value: "1000", label: "1 Ton", multiplier: 1000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Kg", multiplier: 1, unit: "kg" },
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "500", label: "500 Kg", multiplier: 500, unit: "kg" },
+        { value: "1000", label: "1 Ton", multiplier: 1000, unit: "kg" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       dryfruits: [
-        { value: "1", label: "1 Kg", multiplier: 1 },
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Kg", multiplier: 1, unit: "kg" },
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       tea: [
-        { value: "1", label: "1 Kg", multiplier: 1 },
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Kg", multiplier: 1, unit: "kg" },
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       construction: [
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "500", label: "500 Kg", multiplier: 500 },
-        { value: "1000", label: "1 Ton", multiplier: 1000 },
-        { value: "5000", label: "5 Tons", multiplier: 5000 },
-        { value: "10000", label: "10 Tons", multiplier: 10000 },
-        { value: "50", label: "50 Bags", multiplier: 50 },
-        { value: "100", label: "100 Bags", multiplier: 100 },
-        { value: "500", label: "500 Bags", multiplier: 500 },
-        { value: "1000", label: "1,000 Bags", multiplier: 1000 },
-        { value: "100", label: "100 Pieces", multiplier: 100 },
-        { value: "500", label: "500 Pieces", multiplier: 500 },
-        { value: "1000", label: "1,000 Pieces", multiplier: 1000 },
-        { value: "5000", label: "5,000 Pieces", multiplier: 5000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "500", label: "500 Kg", multiplier: 500, unit: "kg" },
+        { value: "1000", label: "1 Ton", multiplier: 1000, unit: "kg" },
+        { value: "5000", label: "5 Tons", multiplier: 5000, unit: "kg" },
+        { value: "10000", label: "10 Tons", multiplier: 10000, unit: "kg" },
+        { value: "50", label: "50 Bags", multiplier: 50, unit: "bags" },
+        { value: "100", label: "100 Bags", multiplier: 100, unit: "bags" },
+        { value: "500", label: "500 Bags", multiplier: 500, unit: "bags" },
+        { value: "1000", label: "1,000 Bags", multiplier: 1000, unit: "bags" },
+        { value: "100", label: "100 Pieces", multiplier: 100, unit: "pieces" },
+        { value: "500", label: "500 Pieces", multiplier: 500, unit: "pieces" },
+        { value: "1000", label: "1,000 Pieces", multiplier: 1000, unit: "pieces" },
+        { value: "5000", label: "5,000 Pieces", multiplier: 5000, unit: "pieces" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "units" }
       ],
       
       fruits: [
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "1", label: "1 Box", multiplier: 1 },
-        { value: "5", label: "5 Boxes", multiplier: 5 },
-        { value: "10", label: "10 Boxes", multiplier: 10 },
-        { value: "25", label: "25 Boxes", multiplier: 25 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "1", label: "1 Box", multiplier: 1, unit: "boxes" },
+        { value: "5", label: "5 Boxes", multiplier: 5, unit: "boxes" },
+        { value: "10", label: "10 Boxes", multiplier: 10, unit: "boxes" },
+        { value: "25", label: "25 Boxes", multiplier: 25, unit: "boxes" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       vegetables: [
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Kg", multiplier: 100 },
-        { value: "1", label: "1 Crate", multiplier: 1 },
-        { value: "5", label: "5 Crates", multiplier: 5 },
-        { value: "10", label: "10 Crates", multiplier: 10 },
-        { value: "25", label: "25 Crates", multiplier: 25 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Kg", multiplier: 100, unit: "kg" },
+        { value: "1", label: "1 Crate", multiplier: 1, unit: "crates" },
+        { value: "5", label: "5 Crates", multiplier: 5, unit: "crates" },
+        { value: "10", label: "10 Crates", multiplier: 10, unit: "crates" },
+        { value: "25", label: "25 Crates", multiplier: 25, unit: "crates" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       beverages: [
-        { value: "12", label: "12 Bottles", multiplier: 12 },
-        { value: "24", label: "24 Bottles", multiplier: 24 },
-        { value: "50", label: "50 Bottles", multiplier: 50 },
-        { value: "100", label: "100 Bottles", multiplier: 100 },
-        { value: "500", label: "500 Bottles", multiplier: 500 },
-        { value: "10", label: "10 Liters", multiplier: 10 },
-        { value: "25", label: "25 Liters", multiplier: 25 },
-        { value: "50", label: "50 Liters", multiplier: 50 },
-        { value: "100", label: "100 Liters", multiplier: 100 },
-        { value: "500", label: "500 Liters", multiplier: 500 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "12", label: "12 Bottles", multiplier: 12, unit: "bottles" },
+        { value: "24", label: "24 Bottles", multiplier: 24, unit: "bottles" },
+        { value: "50", label: "50 Bottles", multiplier: 50, unit: "bottles" },
+        { value: "100", label: "100 Bottles", multiplier: 100, unit: "bottles" },
+        { value: "500", label: "500 Bottles", multiplier: 500, unit: "bottles" },
+        { value: "10", label: "10 Liters", multiplier: 10, unit: "liters" },
+        { value: "25", label: "25 Liters", multiplier: 25, unit: "liters" },
+        { value: "50", label: "50 Liters", multiplier: 50, unit: "liters" },
+        { value: "100", label: "100 Liters", multiplier: 100, unit: "liters" },
+        { value: "500", label: "500 Liters", multiplier: 500, unit: "liters" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "bottles" }
       ],
       
       gadgets: [
-        { value: "1", label: "1 Piece", multiplier: 1 },
-        { value: "5", label: "5 Pieces", multiplier: 5 },
-        { value: "10", label: "10 Pieces", multiplier: 10 },
-        { value: "25", label: "25 Pieces", multiplier: 25 },
-        { value: "50", label: "50 Pieces", multiplier: 50 },
-        { value: "100", label: "100 Pieces", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Piece", multiplier: 1, unit: "pieces" },
+        { value: "5", label: "5 Pieces", multiplier: 5, unit: "pieces" },
+        { value: "10", label: "10 Pieces", multiplier: 10, unit: "pieces" },
+        { value: "25", label: "25 Pieces", multiplier: 25, unit: "pieces" },
+        { value: "50", label: "50 Pieces", multiplier: 50, unit: "pieces" },
+        { value: "100", label: "100 Pieces", multiplier: 100, unit: "pieces" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "pieces" }
       ],
       
       clothing: [
-        { value: "1", label: "1 Piece", multiplier: 1 },
-        { value: "5", label: "5 Pieces", multiplier: 5 },
-        { value: "10", label: "10 Pieces", multiplier: 10 },
-        { value: "25", label: "25 Pieces", multiplier: 25 },
-        { value: "50", label: "50 Pieces", multiplier: 50 },
-        { value: "100", label: "100 Pieces", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Piece", multiplier: 1, unit: "pieces" },
+        { value: "5", label: "5 Pieces", multiplier: 5, unit: "pieces" },
+        { value: "10", label: "10 Pieces", multiplier: 10, unit: "pieces" },
+        { value: "25", label: "25 Pieces", multiplier: 25, unit: "pieces" },
+        { value: "50", label: "50 Pieces", multiplier: 50, unit: "pieces" },
+        { value: "100", label: "100 Pieces", multiplier: 100, unit: "pieces" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "pieces" }
       ],
       
       chocolate: [
-        { value: "1", label: "1 Kg", multiplier: 1 },
-        { value: "5", label: "5 Kg", multiplier: 5 },
-        { value: "10", label: "10 Kg", multiplier: 10 },
-        { value: "25", label: "25 Kg", multiplier: 25 },
-        { value: "50", label: "50 Kg", multiplier: 50 },
-        { value: "100", label: "100 Pieces", multiplier: 100 },
-        { value: "500", label: "500 Pieces", multiplier: 500 },
-        { value: "1000", label: "1,000 Pieces", multiplier: 1000 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Kg", multiplier: 1, unit: "kg" },
+        { value: "5", label: "5 Kg", multiplier: 5, unit: "kg" },
+        { value: "10", label: "10 Kg", multiplier: 10, unit: "kg" },
+        { value: "25", label: "25 Kg", multiplier: 25, unit: "kg" },
+        { value: "50", label: "50 Kg", multiplier: 50, unit: "kg" },
+        { value: "100", label: "100 Pieces", multiplier: 100, unit: "pieces" },
+        { value: "500", label: "500 Pieces", multiplier: 500, unit: "pieces" },
+        { value: "1000", label: "1,000 Pieces", multiplier: 1000, unit: "pieces" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "kg" }
       ],
       
       perfume: [
-        { value: "1", label: "1 Bottle", multiplier: 1 },
-        { value: "5", label: "5 Bottles", multiplier: 5 },
-        { value: "10", label: "10 Bottles", multiplier: 10 },
-        { value: "25", label: "25 Bottles", multiplier: 25 },
-        { value: "50", label: "50 Bottles", multiplier: 50 },
-        { value: "100", label: "100 Bottles", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Bottle", multiplier: 1, unit: "bottles" },
+        { value: "5", label: "5 Bottles", multiplier: 5, unit: "bottles" },
+        { value: "10", label: "10 Bottles", multiplier: 10, unit: "bottles" },
+        { value: "25", label: "25 Bottles", multiplier: 25, unit: "bottles" },
+        { value: "50", label: "50 Bottles", multiplier: 50, unit: "bottles" },
+        { value: "100", label: "100 Bottles", multiplier: 100, unit: "bottles" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "bottles" }
       ],
       
       flowers: [
-        { value: "12", label: "12 Stems", multiplier: 12 },
-        { value: "24", label: "24 Stems", multiplier: 24 },
-        { value: "50", label: "50 Stems", multiplier: 50 },
-        { value: "100", label: "100 Stems", multiplier: 100 },
-        { value: "500", label: "500 Stems", multiplier: 500 },
-        { value: "1", label: "1 Bouquet", multiplier: 1 },
-        { value: "5", label: "5 Bouquets", multiplier: 5 },
-        { value: "10", label: "10 Bouquets", multiplier: 10 },
-        { value: "25", label: "25 Bouquets", multiplier: 25 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "12", label: "12 Stems", multiplier: 12, unit: "stems" },
+        { value: "24", label: "24 Stems", multiplier: 24, unit: "stems" },
+        { value: "50", label: "50 Stems", multiplier: 50, unit: "stems" },
+        { value: "100", label: "100 Stems", multiplier: 100, unit: "stems" },
+        { value: "500", label: "500 Stems", multiplier: 500, unit: "stems" },
+        { value: "1", label: "1 Bouquet", multiplier: 1, unit: "bouquets" },
+        { value: "5", label: "5 Bouquets", multiplier: 5, unit: "bouquets" },
+        { value: "10", label: "10 Bouquets", multiplier: 10, unit: "bouquets" },
+        { value: "25", label: "25 Bouquets", multiplier: 25, unit: "bouquets" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "stems" }
       ],
       
       default: [
-        { value: "1", label: "1 Unit", multiplier: 1 },
-        { value: "5", label: "5 Units", multiplier: 5 },
-        { value: "10", label: "10 Units", multiplier: 10 },
-        { value: "25", label: "25 Units", multiplier: 25 },
-        { value: "50", label: "50 Units", multiplier: 50 },
-        { value: "100", label: "100 Units", multiplier: 100 },
-        { value: "custom", label: "Custom Quantity", multiplier: 1 }
+        { value: "1", label: "1 Unit", multiplier: 1, unit: "units" },
+        { value: "5", label: "5 Units", multiplier: 5, unit: "units" },
+        { value: "10", label: "10 Units", multiplier: 10, unit: "units" },
+        { value: "25", label: "25 Units", multiplier: 25, unit: "units" },
+        { value: "50", label: "50 Units", multiplier: 50, unit: "units" },
+        { value: "100", label: "100 Units", multiplier: 100, unit: "units" },
+        { value: "custom", label: "Custom Quantity", multiplier: 1, unit: "units" }
       ]
     };
     
@@ -805,33 +801,76 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
     return parseFloat(inrAmount) * rate;
   };
 
+  // Get price per unit based on product type
+  const getPricePerUnit = () => {
+    const productType = getProductType();
+    const basePrice = parseFloat(baseProductPrice);
+    
+    // For rice, the base price is per quintal (100kg), so convert to per kg
+    if (productType === 'rice') {
+      return basePrice / 100; // Convert quintal price to per kg
+    }
+    
+    // For other products, return the base price as is
+    return basePrice;
+  };
+
+  // Calculate quantity price based on selected quantity and unit
+  const calculateQuantityPrice = (quantityValue, gradeMultiplier, customQty = null) => {
+    const pricePerUnit = getPricePerUnit();
+    const productType = getProductType();
+    
+    if (quantityValue === "custom") {
+      const customQuantityValue = customQty || parseFloat(customQuantity) || 0;
+      if (customQuantityValue > 0) {
+        return customQuantityValue * pricePerUnit * gradeMultiplier;
+      }
+      return 0;
+    }
+    
+    const quantityOptionsList = getQuantityOptions();
+    const selectedQuantity = quantityOptionsList.find(q => q.value === quantityValue);
+    if (!selectedQuantity) return 0;
+    
+    const qty = selectedQuantity.multiplier;
+    
+    // For rice, we need to handle different units
+    if (productType === 'rice') {
+      // If the quantity is in kg, use as is (since pricePerUnit is now per kg)
+      if (selectedQuantity.unit === 'kg') {
+        return qty * pricePerUnit * gradeMultiplier;
+      }
+      // For other units, you might need additional conversion logic
+    }
+    
+    return qty * pricePerUnit * gradeMultiplier;
+  };
+
   // Price calculation
   const calculatePrices = () => {
     let gradePriceValue = 0;
     let packingPriceValue = 0;
     let quantityPriceValue = 0;
-    let logoPriceValue = 0;
     let shippingCostValue = 0;
     let insuranceCostValue = 0;
     let taxesValue = 0;
     let portCostValue = 0;
 
-    // Use base product price as starting point (in INR)
-    let basePrice = parseFloat(baseProductPrice);
+    // Get price per unit based on product type
+    const pricePerUnit = getPricePerUnit();
 
+    // Calculate grade multiplier
+    let gradeMultiplier = 1;
     if (grade) {
       const availableGrades = getAvailableGrades(getProductType(), product);
       const selectedGrade = availableGrades.find(g => g.value === grade);
       if (selectedGrade) {
-        // Apply grade multiplier to base price
-        const gradeMultiplier = parseFloat(selectedGrade.price);
-        gradePriceValue = basePrice * gradeMultiplier;
-      } else {
-        gradePriceValue = basePrice;
+        gradeMultiplier = parseFloat(selectedGrade.price);
       }
-    } else {
-      gradePriceValue = basePrice;
     }
+
+    // Calculate grade price (this is the price per unit after grade adjustment)
+    gradePriceValue = pricePerUnit * gradeMultiplier;
 
     if (packing) {
       const selectedPacking = packingOptions.find(p => p.value === packing);
@@ -840,21 +879,8 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
       }
     }
 
-    if (quantity && quantity !== "custom") {
-      const quantityOptionsList = getQuantityOptions();
-      const selectedQuantity = quantityOptionsList.find(q => q.value === quantity);
-      if (selectedQuantity) {
-        const qty = selectedQuantity.multiplier;
-        quantityPriceValue = qty * gradePriceValue;
-      }
-    } else if (quantity === "custom") {
-      // Handle custom quantity - will be calculated when user inputs value
-      quantityPriceValue = 0;
-    }
-
-    if (customLogoRequired === "Yes") {
-      logoPriceValue = 500; // 500 INR for custom logo
-    }
+    // Calculate quantity price
+    quantityPriceValue = calculateQuantityPrice(quantity, gradeMultiplier);
 
     // Calculate port cost if port is selected
     if (port) {
@@ -867,40 +893,38 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
       const productType = getProductType();
       shippingCostValue = calculateShippingCost(quantity, productType, quantityPriceValue);
       insuranceCostValue = calculateInsuranceCost(quantityPriceValue);
-      taxesValue = calculateTaxes(quantityPriceValue + packingPriceValue + logoPriceValue + portCostValue);
+      taxesValue = calculateTaxes(quantityPriceValue + packingPriceValue + portCostValue);
     }
 
-    const subtotal = quantityPriceValue + packingPriceValue + logoPriceValue + portCostValue;
-    const cifTotal = shippingCostValue + insuranceCostValue + taxesValue;
-    const finalTotal = cifRequired === "Yes" ? subtotal + cifTotal : subtotal;
+    const subtotal = quantityPriceValue + packingPriceValue + portCostValue + shippingCostValue + insuranceCostValue + taxesValue;
 
     // Convert all prices to selected currency
     setGradePrice(convertToCurrency(gradePriceValue).toFixed(2));
     setPackingPrice(convertToCurrency(packingPriceValue).toFixed(2));
     setQuantityPrice(convertToCurrency(quantityPriceValue).toFixed(2));
-    setLogoPrice(convertToCurrency(logoPriceValue).toFixed(2));
     setPortCost(convertToCurrency(portCostValue).toFixed(2));
     setShippingCost(convertToCurrency(shippingCostValue).toFixed(2));
     setInsuranceCost(convertToCurrency(insuranceCostValue).toFixed(2));
     setTaxes(convertToCurrency(taxesValue).toFixed(2));
     setTotalPrice(convertToCurrency(subtotal).toFixed(2));
-    setFinalTotalPrice(convertToCurrency(finalTotal).toFixed(2));
   };
 
   // Get prices for display (with currency conversion)
   const getDisplayPrices = () => {
+    const subtotal = parseFloat(totalPrice);
+    const finalTotalPrice = subtotal;
+
     return {
       gradePrice: gradePrice,
       packingPrice: packingPrice,
       quantityPrice: quantityPrice,
-      logoPrice: logoPrice,
       portCost: portCost,
       shippingCost: shippingCost,
       insuranceCost: insuranceCost,
       taxes: taxes,
       totalPrice: totalPrice,
-      finalTotalPrice: finalTotalPrice,
-      baseProductPrice: convertToCurrency(baseProductPrice).toFixed(2)
+      finalTotalPrice: finalTotalPrice.toFixed(2),
+      baseProductPrice: convertToCurrency(getPricePerUnit()).toFixed(2)
     };
   };
 
@@ -996,14 +1020,19 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
   const handleQuantityChange = (e) => {
     const value = e.target.value;
     setQuantity(value);
+    if (value !== "custom") {
+      setCustomQuantity("");
+    }
   };
 
   const handleCustomQuantityChange = (e) => {
     const value = e.target.value;
-    if (value && !isNaN(value)) {
-      const basePrice = parseFloat(baseProductPrice);
+    setCustomQuantity(value);
+    
+    if (value && !isNaN(value) && parseFloat(value) > 0) {
+      const pricePerUnit = getPricePerUnit();
       const gradeMultiplier = grade ? parseFloat(getAvailableGrades(getProductType(), product).find(g => g.value === grade)?.price || 1) : 1;
-      const calculatedPrice = basePrice * gradeMultiplier * parseFloat(value);
+      const calculatedPrice = parseFloat(value) * pricePerUnit * gradeMultiplier;
       setQuantityPrice(convertToCurrency(calculatedPrice).toFixed(2));
     } else {
       setQuantityPrice("0.00");
@@ -1030,44 +1059,8 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
     setCurrency(e.target.value);
   };
 
-  const handleCustomLogoChange = (e) => {
-    const value = e.target.value;
-    setCustomLogoRequired(value);
-    if (value !== "Yes") {
-      setCustomLogoFile(null);
-      setLogoPrice("0.00");
-    }
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      const maxSize = 10 * 1024 * 1024;
-
-      if (!allowedTypes.includes(file.type)) {
-        alert('Please upload a valid file type (JPG, PNG, JPEG, PDF, DOC)');
-        return;
-      }
-
-      if (file.size > maxSize) {
-        alert('File size should be less than 10MB');
-        return;
-      }
-
-      setLogoUploading(true);
-      setTimeout(() => {
-        setCustomLogoFile(file);
-        setLogoUploading(false);
-      }, 1500);
-    }
-  };
-
-  const handleRemoveFile = () => {
-    setCustomLogoFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+  const handleLogoChange = (e) => {
+    setLogoRequired(e.target.value);
   };
 
   // Helper function to get quantity unit for custom input placeholder
@@ -1097,7 +1090,7 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!quantity || !packing || !port || !grade || !fullName || !cifRequired || !customLogoRequired) {
+    if (!quantity || !packing || !port || !grade || !fullName || !cifRequired || !logoRequired) {
       alert("Please fill all required fields.");
       return;
     }
@@ -1112,18 +1105,19 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
       return;
     }
 
-    if (customLogoRequired === "") {
-      alert("Please select if custom logo is required.");
-      return;
-    }
-
-    if (customLogoRequired === "Yes" && !customLogoFile) {
-      alert("Please upload your custom logo file.");
+    if (logoRequired === "") {
+      alert("Please select if logo is required.");
       return;
     }
 
     if (!currency) {
       alert("Please select a currency.");
+      return;
+    }
+    
+    // Validate custom quantity if selected
+    if (quantity === "custom" && (!customQuantity || parseFloat(customQuantity) <= 0)) {
+      alert("Please enter a valid custom quantity.");
       return;
     }
     
@@ -1139,7 +1133,13 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
     const fullPhoneNumber = `${countryCode}${phoneNumber}`;
     const quantityOptions = getQuantityOptions();
     const selectedQuantityOption = quantityOptions.find(opt => opt.value === quantity);
-    const quantityDisplay = selectedQuantityOption ? selectedQuantityOption.label : `${quantity} ${getQuantityUnit()}`;
+    
+    let quantityDisplay = "";
+    if (quantity === "custom") {
+      quantityDisplay = `${customQuantity} ${getQuantityUnit()}`;
+    } else {
+      quantityDisplay = selectedQuantityOption ? selectedQuantityOption.label : `${quantity} ${getQuantityUnit()}`;
+    }
 
     const displayPrices = getDisplayPrices();
     const currencySymbol = getCurrencySymbol();
@@ -1157,12 +1157,7 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
       quantity: quantityDisplay,
       port,
       cifRequired,
-      customLogoRequired,
-      customLogoFile: customLogoRequired === "Yes" ? {
-        name: customLogoFile.name,
-        type: customLogoFile.type,
-        size: customLogoFile.size
-      } : null,
+      logoRequired,
       currency: currency,
       priceBreakdown: {
         baseProductPrice: `${currencySymbol}${formatNumber(displayPrices.baseProductPrice)}/unit`,
@@ -1170,10 +1165,6 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
         packingPrice: `${currencySymbol}${formatNumber(displayPrices.packingPrice)}/bag`,
         quantityPrice: `${currencySymbol}${formatNumber(displayPrices.quantityPrice)}`,
         portCost: `${currencySymbol}${formatNumber(displayPrices.portCost)}`,
-        customLogoPrice: customLogoRequired === "Yes" ? `${currencySymbol}${formatNumber(displayPrices.logoPrice)}` : "N/A",
-        shippingCost: cifRequired === "Yes" ? `${currencySymbol}${formatNumber(displayPrices.shippingCost)}` : "N/A",
-        insuranceCost: cifRequired === "Yes" ? `${currencySymbol}${formatNumber(displayPrices.insuranceCost)}` : "N/A",
-        taxes: cifRequired === "Yes" ? `${currencySymbol}${formatNumber(displayPrices.taxes)}` : "N/A",
         subtotal: `${currencySymbol}${formatNumber(displayPrices.totalPrice)}`,
         finalTotal: `${currencySymbol}${formatNumber(displayPrices.finalTotalPrice)}`
       },
@@ -1202,8 +1193,7 @@ const BuyModal = ({ isOpen, onClose, product, profile }) => {
 - Quantity: ${quantityDisplay}
 - Port: ${port}
 - CIF Required: ${cifRequired}
-- Custom Logo Required: ${customLogoRequired}
-${customLogoRequired === "Yes" ? `- Logo File: ${customLogoFile.name}` : ""}
+- Logo Required: ${logoRequired}
 - Currency: ${currency}
 ${exchangeInfo ? `- Exchange Rate: ${exchangeInfo.example}` : ""}
 - Estimated Bill Breakdown:
@@ -1212,13 +1202,8 @@ ${exchangeInfo ? `- Exchange Rate: ${exchangeInfo.example}` : ""}
   • Packing Price: ${currencySymbol}${formatNumber(displayPrices.packingPrice)}/bag
   • Quantity Price: ${currencySymbol}${formatNumber(displayPrices.quantityPrice)}
   • Port Charges: ${currencySymbol}${formatNumber(displayPrices.portCost)}
-  ${customLogoRequired === "Yes" ? `• Custom Logo: ${currencySymbol}${formatNumber(displayPrices.logoPrice)}` : ""}
-  ${cifRequired === "Yes" ? `
-  • Shipping Cost: ${currencySymbol}${formatNumber(displayPrices.shippingCost)}
-  • Insurance Cost: ${currencySymbol}${formatNumber(displayPrices.insuranceCost)}
-  • Taxes & Duties: ${currencySymbol}${formatNumber(displayPrices.taxes)}` : ""}
   • Subtotal: ${currencySymbol}${formatNumber(displayPrices.totalPrice)}
-  • Final Total${cifRequired === "Yes" ? " (CIF)" : ""}: ${currencySymbol}${formatNumber(displayPrices.finalTotalPrice)}
+  • Final Total: ${currencySymbol}${formatNumber(displayPrices.finalTotalPrice)}
 ${additionalInfo ? `- Additional Info: ${additionalInfo}` : ""}
 Thank you!`;
 
@@ -1245,19 +1230,17 @@ Thank you!`;
     setPort("");
     setCifRequired("");
     setCurrency("INR");
-    setCustomLogoRequired("");
-    setCustomLogoFile(null);
+    setLogoRequired("");
     setAdditionalInfo("");
+    setCustomQuantity("");
     setGradePrice("0.00");
     setPackingPrice("0.00");
     setQuantityPrice("0.00");
-    setLogoPrice("0.00");
     setPortCost("0.00");
     setShippingCost("0.00");
     setInsuranceCost("0.00");
     setTaxes("0.00");
     setTotalPrice("0.00");
-    setFinalTotalPrice("0.00");
     if (!profile) {
       setFullName("");
       setEmail("");
@@ -1277,7 +1260,7 @@ Thank you!`;
   // Effects
   useEffect(() => {
     calculatePrices();
-  }, [grade, packing, quantity, port, cifRequired, customLogoRequired, currency, baseProductPrice]);
+  }, [grade, packing, quantity, port, cifRequired, currency, baseProductPrice, customQuantity]);
 
   useEffect(() => {
     if (isOpen && profile) {
@@ -1308,18 +1291,16 @@ Thank you!`;
       setGrade("");
       setCifRequired("");
       setCurrency("INR");
-      setCustomLogoRequired("");
-      setCustomLogoFile(null);
+      setLogoRequired("");
+      setCustomQuantity("");
       setGradePrice("0.00");
       setPackingPrice("0.00");
       setQuantityPrice("0.00");
-      setLogoPrice("0.00");
       setPortCost("0.00");
       setShippingCost("0.00");
       setInsuranceCost("0.00");
       setTaxes("0.00");
       setTotalPrice("0.00");
-      setFinalTotalPrice("0.00");
       
       // Extract base price from product (this will be in INR)
       const basePrice = extractBasePrice(product.price);
@@ -1352,6 +1333,7 @@ Thank you!`;
   const quantityOptions = getQuantityOptions();
   const displayPrices = getDisplayPrices();
   const exchangeInfo = getExchangeRateInfo();
+  const productType = getProductType();
 
   return (
     <>
@@ -1367,6 +1349,11 @@ Thank you!`;
             {product && (
               <div className="product-price-info">
                 <small>Base Price: {product.price} (INR)</small>
+                {productType === 'rice' && (
+                  <div className="rice-price-note">
+                    <small>Note: Rice prices are per quintal (100kg). Calculations are converted to per kg.</small>
+                  </div>
+                )}
                 {port && (
                   <div className="port-selection-info">
                     <small>Selected Port: {port} - Charges: {currencySymbol}{formatNumber(displayPrices.portCost)}</small>
@@ -1463,9 +1450,9 @@ Thank you!`;
                           value={product.variety}
                           className="form-input"
                           readOnly
-                          disabled
-                        />
-                      </div>
+                        disabled
+                      />
+                    </div>
                     )}
 
                     <div className="form-group">
@@ -1514,11 +1501,13 @@ Thank you!`;
                         <input
                           type="number"
                           placeholder={`Enter custom quantity in ${getQuantityUnit()}`}
+                          value={customQuantity}
                           onChange={handleCustomQuantityChange}
                           className="form-input"
                           style={{ marginTop: '10px' }}
                           min="1"
                           step="1"
+                          required
                         />
                       )}
                     </div>
@@ -1559,54 +1548,16 @@ Thank you!`;
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Custom Logo Required? *</label>
-                      <select value={customLogoRequired} onChange={handleCustomLogoChange} required className="form-select">
+                      <label className="form-label">Logo Required? *</label>
+                      <select value={logoRequired} onChange={handleLogoChange} required className="form-select">
                         <option value="">Select Option</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
                       </select>
                       <div className="logo-info">
-                        <small>Add your custom logo to the packaging (Additional charge: {currencySymbol}{convertToCurrency(500).toFixed(2)})</small>
+                        <small>Add your logo to the packaging</small>
                       </div>
                     </div>
-
-                    {customLogoRequired === "Yes" && (
-                      <div className="form-group">
-                        <label className="form-label">Upload Logo File *</label>
-                        <div className="file-upload-section">
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileUpload}
-                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                            className="file-input"
-                            required
-                          />
-                          <div className="file-upload-info">
-                            <small>Supported formats: JPG, PNG, JPEG, PDF, DOC (Max: 10MB)</small>
-                          </div>
-                          
-                          {logoUploading && (
-                            <div className="upload-progress">
-                              <div className="upload-spinner"></div>
-                              <span>Uploading file...</span>
-                            </div>
-                          )}
-                          
-                          {customLogoFile && (
-                            <div className="uploaded-file">
-                              <div className="file-info">
-                                <span className="file-name">{customLogoFile.name}</span>
-                                <span className="file-size">({(customLogoFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                              </div>
-                              <button type="button" onClick={handleRemoveFile} className="remove-file-btn">
-                                Remove
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
 
                     <div className="form-group">
                       <label className="form-label">Currency *</label>
@@ -1658,11 +1609,14 @@ Thank you!`;
               {/* Right Side - Estimated Bill (Also Scrollable) */}
               <div className="estimate-section-container" ref={estimateContainerRef}>
                 <div className="price-breakdown-section">
-                  <h4 className="price-breakdown-title">
-                    {cifRequired === "Yes" ? "Estimated Bill Breakdown (CIF)" : "Estimated Bill Breakdown"}
-                  </h4>
+                  <h4 className="price-breakdown-title">Estimated Bill Breakdown</h4>
                   <div className="estimate-note">
                     <small>This is an estimated bill. Final pricing may vary based on actual costs and market conditions.</small>
+                    {productType === 'rice' && (
+                      <div className="rice-calculation-note">
+                        <small>Rice prices calculated per kg (converted from quintal price)</small>
+                      </div>
+                    )}
                     {exchangeInfo && (
                       <div className="currency-conversion-note">
                         <small>Prices converted from INR to {currency}. {exchangeInfo.example}</small>
@@ -1695,29 +1649,18 @@ Thank you!`;
                       </div>
                     )}
                     
-                    {customLogoRequired === "Yes" && (
-                      <div className="price-item">
-                        <span className="price-label">Custom Logo:</span>
-                        <span className="price-value">{currencySymbol}{formatNumber(displayPrices.logoPrice)}</span>
-                      </div>
-                    )}
-                    <div className="price-item subtotal">
-                      <span className="price-label">Product Subtotal:</span>
-                      <span className="price-value">{currencySymbol}{formatNumber(displayPrices.totalPrice)}</span>
-                    </div>
-                    
-                    {/* CIF Costs - Only show when CIF is Yes */}
+                    {/* CIF Costs - Only shown when CIF is required */}
                     {cifRequired === "Yes" && (
                       <>
-                        <div className="price-item cif-costs">
+                        <div className="price-item">
                           <span className="price-label">Shipping Cost:</span>
                           <span className="price-value">{currencySymbol}{formatNumber(displayPrices.shippingCost)}</span>
                         </div>
-                        <div className="price-item cif-costs">
+                        <div className="price-item">
                           <span className="price-label">Insurance Cost:</span>
                           <span className="price-value">{currencySymbol}{formatNumber(displayPrices.insuranceCost)}</span>
                         </div>
-                        <div className="price-item cif-costs">
+                        <div className="price-item">
                           <span className="price-label">Taxes & Duties:</span>
                           <span className="price-value">{currencySymbol}{formatNumber(displayPrices.taxes)}</span>
                         </div>
@@ -1725,9 +1668,7 @@ Thank you!`;
                     )}
                     
                     <div className="price-item final-total">
-                      <span className="price-label">
-                        Final Total{cifRequired === "Yes" ? " (CIF)" : ""}:
-                      </span>
+                      <span className="price-label">Final Total:</span>
                       <span className="price-value">{currencySymbol}{formatNumber(displayPrices.finalTotalPrice)}</span>
                     </div>
                   </div>
@@ -1858,6 +1799,19 @@ Thank you!`;
           color: #90cdf4;
           font-size: 0.8rem;
           line-height: 1.3;
+        }
+
+        .rice-price-note {
+          margin-top: 5px;
+          padding: 4px 8px;
+          background: rgba(101, 163, 13, 0.1);
+          border-radius: 4px;
+          border-left: 2px solid #65a30d;
+        }
+
+        .rice-price-note small {
+          color: #84cc16;
+          font-size: 0.75rem;
         }
 
         .port-selection-info {
@@ -2072,103 +2026,6 @@ Thank you!`;
           font-size: 0.75rem;
         }
 
-        .file-upload-section {
-          margin-top: 8px;
-        }
-
-        .file-input {
-          width: 100%;
-          padding: 10px;
-          background: rgba(45, 55, 72, 0.8);
-          border: 2px dashed rgba(74, 85, 104, 0.5);
-          border-radius: 6px;
-          color: white;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 0.9rem;
-        }
-
-        .file-input:hover {
-          border-color: #4299e1;
-          background: rgba(45, 55, 72, 1);
-        }
-
-        .file-upload-info {
-          margin-top: 6px;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 0.8rem;
-        }
-
-        .upload-progress {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-top: 8px;
-          padding: 8px;
-          background: rgba(45, 55, 72, 0.6);
-          border-radius: 6px;
-          color: #63b3ed;
-          font-size: 0.9rem;
-        }
-
-        .upload-spinner {
-          width: 14px;
-          height: 14px;
-          border: 2px solid transparent;
-          border-top: 2px solid #63b3ed;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        .uploaded-file {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 8px;
-          padding: 10px;
-          background: rgba(45, 55, 72, 0.6);
-          border: 1px solid rgba(74, 85, 104, 0.3);
-          border-radius: 6px;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .file-info {
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-          flex: 1;
-          min-width: 0;
-        }
-
-        .file-name {
-          color: #e2e8f0;
-          font-weight: 500;
-          font-size: 0.9rem;
-          word-break: break-word;
-        }
-
-        .file-size {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 0.8rem;
-        }
-
-        .remove-file-btn {
-          background: #fc8181;
-          color: white;
-          border: none;
-          padding: 5px 10px;
-          border-radius: 5px;
-          font-size: 0.8rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          white-space: nowrap;
-        }
-
-        .remove-file-btn:hover {
-          background: #f56565;
-        }
-
         .price-breakdown-section {
           padding: 20px;
           height: 100%;
@@ -2202,6 +2059,20 @@ Thank you!`;
         .estimate-note small {
           color: #90cdf4;
           font-size: 0.8rem;
+          line-height: 1.3;
+        }
+
+        .rice-calculation-note {
+          margin-top: 8px;
+          padding: 8px;
+          background: rgba(101, 163, 13, 0.1);
+          border-radius: 5px;
+          border-left: 3px solid #65a30d;
+        }
+
+        .rice-calculation-note small {
+          color: #84cc16;
+          font-size: 0.75rem;
           line-height: 1.3;
         }
 
@@ -2240,24 +2111,7 @@ Thank you!`;
           border-bottom: none;
         }
 
-        .price-item.subtotal {
-          border-top: 2px solid #4299e1;
-          border-bottom: none;
-          padding-top: 12px;
-          margin-top: 5px;
-          font-weight: 600;
-        }
-
         .price-item.port-costs {
-          color: #90cdf4;
-          border-left: 3px solid #4299e1;
-          padding-left: 8px;
-          background: rgba(66, 153, 225, 0.05);
-          margin: 3px -8px;
-          padding: 8px;
-        }
-
-        .price-item.cif-costs {
           color: #90cdf4;
           border-left: 3px solid #4299e1;
           padding-left: 8px;
@@ -2293,12 +2147,7 @@ Thank you!`;
           white-space: nowrap;
         }
 
-        .price-item.subtotal .price-value {
-          color: #63b3ed;
-        }
-
-        .price-item.port-costs .price-value,
-        .price-item.cif-costs .price-value {
+        .price-item.port-costs .price-value {
           color: #90cdf4;
         }
 
@@ -2461,17 +2310,6 @@ Thank you!`;
 
           .country-code-select {
             width: 100%;
-          }
-
-          .uploaded-file {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-          }
-
-          .remove-file-btn {
-            align-self: stretch;
-            text-align: center;
           }
 
           .price-breakdown-section {

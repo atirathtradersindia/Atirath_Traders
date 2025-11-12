@@ -97,7 +97,8 @@ const AllProducts = ({ onProductClick, onNavigate }) => {
   const handleProductClick = (productType) => {
     console.log('All products - product clicked:', productType);
     if (onProductClick) {
-      onProductClick(productType);
+      // Always set fromAllProducts to true when clicking from AllProducts
+      onProductClick(productType, { fromAllProducts: true });
     }
   };
 

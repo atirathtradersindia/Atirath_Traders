@@ -1,4 +1,4 @@
-export const productsData = {
+export const productsData = { 
   oil: [
     // Original 10 products
     { id: 1, name: "Premium Sunflower Oil", brand: "sunflower", price: "₹120-140 per liter", image: "https://static.vecteezy.com/system/resources/thumbnails/046/829/257/small_2x/olive-oil-bowl-isolated-on-transparent-background-png.png" },

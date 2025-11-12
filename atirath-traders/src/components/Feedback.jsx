@@ -17,29 +17,38 @@ const Feedback = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, this would send data to a server
     console.log('Feedback submitted:', formData);
     
-    // Show success message
     setShowPopup(true);
-    
-    // Reset form
     setFormData({ name: '', email: '', message: '' });
     
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setShowPopup(false);
-    }, 3000);
+    setTimeout(() => setShowPopup(false), 3000);
   };
 
   return (
     <section id="feedback" className="py-5 px-3">
       <div className="container">
-        <h3 className="h2 fw-bold text-center accent mb-5" data-aos="zoom-in">Feedback</h3>
+        {/* MAIN HEADING: Get in Touch */}
+        <h2
+          className="display-4 fw-bold accent text-center mb-5"
+          data-aos="zoom-in"
+          style={{ marginTop: '80px' }}   // Clears fixed navbar
+        >
+          Get in Touch
+        </h2>
+
         <div className="row g-5">
-          {/* Left side: Company Details */}
+          {/* LEFT: Contact Us */}
           <div className="col-lg-6" data-aos="fade-up">
             <div className="glass p-4 h-100">
+              <h3
+                className="h4 fw-bold accent mb-4 text-center"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                Contact Us
+              </h3>
+
               <div className="d-flex align-items-center gap-3 mb-4">
                 <div className="footer-logo-icon">
                   <img src="/img/icon2.png" alt="ATIRATH GROUP Logo" className="logo-img" />
@@ -49,6 +58,7 @@ const Feedback = () => {
                   <p className="small opacity-80 mb-0">Diverse Businesses, One Vision</p>
                 </div>
               </div>
+
               <div>
                 <p className="small mb-2">
                   <span className="fw-semibold">Website:</span> www.atirathtraders.com
@@ -69,9 +79,17 @@ const Feedback = () => {
             </div>
           </div>
 
-          {/* Right side: Feedback Form */}
+          {/* RIGHT: Feedback Form */}
           <div className="col-lg-6" data-aos="fade-up" data-aos-delay="200">
             <div className="glass p-4">
+              <h3
+                className="h4 fw-bold accent mb-4 text-center"
+                data-aos="fade-up"
+                data-aos-delay="300"
+              >
+                Feedback
+              </h3>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="form-label fw-semibold">Name</label>
@@ -107,7 +125,7 @@ const Feedback = () => {
                     className="form-control search-bar"
                     placeholder="Write your feedback..."
                     required
-                  ></textarea>
+                  />
                 </div>
                 <button
                   type="submit"

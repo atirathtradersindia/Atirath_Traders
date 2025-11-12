@@ -1,249 +1,394 @@
 import React, { useState, useEffect } from 'react';
 import AOS from 'aos';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Leadership from './components/Leadership';
 import Services from './components/Services';
+import ServicesPage from './components/ServicesPage';
 import Feedback from './components/Feedback';
 import Footer from './components/Footer';
 import ProductPage from './components/ProductPage';
 import AllProducts from './components/AllProducts';
+import Blog from './components/Blog';
+import BlogPost from './components/BlogPost';
+import JoinUs from './components/JoinUs';
 import { SignIn, SignUp } from './components/AuthPages';
-import Profile from './components/Profile';
+import IndianAgriRSSFeed from './components/IndianAgriRSSFeed';
+import {
+  auth,
+  database,
+  ref,
+  update,
+  onAuthStateChanged,
+  signOut,
+} from './firebase';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [currentProductType, setCurrentProductType] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [showAuthForm, setShowAuthForm] = useState(null); // 'signin', 'signup', or null
-  const [fromAllProducts, setFromAllProducts] = useState(false);
-  const [preFilledEmail, setPreFilledEmail] = useState(''); // For auto-filling email after signup
+/* --------------------------------------------------------------------
+   Dedicated page components
+   -------------------------------------------------------------------- */
+const HomePage = ({ onServiceClick, onViewAllClick }) => (
+  <div id="home-page">
+    <Hero />
+    <About id="about" />
+    <Leadership id="leadership" />
+    <Services
+      id="services"
+      onServiceClick={onServiceClick}
+      onViewAllClick={onViewAllClick}
+    />
+    <Feedback id="feedback" />
+    <Footer id="contact" />
+  </div>
+);
 
+const AboutPage = () => <About id="about" />;
+const LeadershipPage = () => <Leadership id="leadership" />;
+const ProductsPage = ({ onServiceClick, onViewAllClick }) => (
+  <Services 
+    id="services" 
+    onServiceClick={onServiceClick}
+    onViewAllClick={onViewAllClick}
+  />
+);
+const ServicesPageComponent = () => <ServicesPage />;
+const BlogPage = () => <Blog id="blog" />;
+const JoinUsPage = () => <JoinUs />;
+const FeedbackPage = () => <Feedback id="feedback" />;
+const ContactPage = () => (
+  <div>
+    <Feedback id="feedback" />
+    <Footer id="contact" />
+  </div>
+);
+
+/* --------------------------------------------------------------------
+   Router Wrapper
+   -------------------------------------------------------------------- */
+const RouterWrapper = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Auto scroll to top on route change
   useEffect(() => {
-    // Initialize AOS
-    AOS.init({ duration: 1000, once: true });
-    
-    // Check for saved user ONLY - no page state
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
-    
-    // Handle hash URL navigation
-    const handleHashChange = () => {
-      if (window.location.hash && currentPage === 'home') {
-        const sectionId = window.location.hash.substring(1);
-        setTimeout(() => {
-          scrollToSection(sectionId);
-        }, 300);
-      }
-    };
-
-    // Initial hash check
-    setTimeout(handleHashChange, 500);
-
-    // Listen for hash changes
-    window.addEventListener('hashchange', handleHashChange);
-    
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, [currentPage]);
-
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.pageYOffset - 80;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const handleNavigate = (page, productType = null, options = {}) => {
-    console.log('Navigating to:', page, 'with product:', productType, 'options:', options);
-    setCurrentPage(page);
-    setShowAuthForm(null); // Hide auth forms when navigating to other pages
-    
-    // Set fromAllProducts flag based on navigation context
-    if (options.fromAllProducts !== undefined) {
-      setFromAllProducts(options.fromAllProducts);
-    } else if (page === 'all-products') {
-      // When going to all-products, reset the flag
-      setFromAllProducts(false);
-    }
-    
-    if (page === 'product' && productType) {
-      setCurrentProductType(productType);
-    } else if (page === 'home') {
-      setCurrentProductType(null);
-      setFromAllProducts(false); // Reset flag when going home
-    } else {
-      setCurrentProductType(null);
-    }
-    
     window.scrollTo(0, 0);
-  };
+  }, [location.pathname]);
 
-  const handleAuthNavigation = (formType) => {
-    if (currentUser) {
-      handleNavigate('profile');
-    } else {
-      setShowAuthForm(formType);
-      window.scrollTo(0, 0);
+  /* ---------- Global search state ---------- */
+  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
+
+  /* ---------- auth ---------- */
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showAuthForm, setShowAuthForm] = useState(null);
+  const [preFilledEmail, setPreFilledEmail] = useState('');
+
+  /* ---------- AOS ---------- */
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: true });
+  }, []);
+
+  /* ---------- Firebase auth listener ---------- */
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        setCurrentUser({
+          uid: user.uid,
+          name: user.displayName || 'User',
+          email: user.email,
+          phone: user.phoneNumber || '',
+          location: '',
+          createdAt: user.metadata.creationTime || new Date().toISOString(),
+        });
+        try {
+          await update(ref(database, `users/${user.uid}`), {
+            lastLogin: new Date().toISOString(),
+          });
+        } catch (e) {
+          console.error('last-login update error', e);
+        }
+      } else {
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  /* ---------- Profile Update Handler ---------- */
+  const handleProfileUpdate = async (updatedUserData) => {
+    if (!currentUser) return;
+
+    try {
+      // Update Firebase user profile
+      await update(ref(database, `users/${currentUser.uid}`), {
+        name: updatedUserData.name,
+        email: updatedUserData.email,
+        phone: updatedUserData.phone,
+        location: updatedUserData.location,
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Update local state
+      setCurrentUser(prev => ({
+        ...prev,
+        ...updatedUserData
+      }));
+
+      return true;
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
     }
   };
 
-  const handleServiceClick = (productType, context = {}) => {
-    console.log('Service clicked:', productType, 'context:', context);
-    
-    // Determine if we're coming from AllProducts
-    const fromAllProducts = context.fromAllProducts || currentPage === 'all-products';
-    
-    handleNavigate('product', productType, { fromAllProducts });
+  /* ---------- navigation helpers ---------- */
+  const goTo = (path) => navigate(path);
+  const goToProduct = (type) => goTo(`/product/${type}`);
+  const goToAllProducts = () => goTo('/all-products');
+  const goToHome = () => goTo('/');
+  const goToAbout = () => goTo('/about');
+  const goToLeadership = () => goTo('/leadership');
+  const goToProducts = () => goTo('/products');
+  const goToServices = () => goTo('/services');
+  const goToBlog = () => goTo('/blog');
+  const goToJoinUs = () => goTo('/join-us');
+  const goToFeedback = () => goTo('/feedback');
+  const goToContact = () => goTo('/contact');
+  const goToProfile = () => {
+    // Profile is now handled in navbar dropdown
+    console.log('Profile navigation handled in navbar dropdown');
   };
 
-  const handleViewAllClick = () => {
-    console.log('View All clicked - navigating to all-products');
-    handleNavigate('all-products');
+  const handleServiceClick = (type) => goToProduct(type);
+  const handleViewAllClick = () => goToAllProducts();
+
+  /* ---------- Global search handlers ---------- */
+  const handleGlobalSearchChange = (query) => {
+    setGlobalSearchQuery(query);
+  };
+
+  const handleGlobalSearchClear = () => {
+    setGlobalSearchQuery('');
+  };
+
+  /* ---------- auth handlers ---------- */
+  const openAuth = (type = 'signin') => setShowAuthForm(type);
+  const closeAuth = () => {
+    setShowAuthForm(null);
+    setPreFilledEmail('');
   };
 
   const handleSignIn = (user) => {
-    setCurrentUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    setShowAuthForm(null);
-    
+    setIsAuthenticated(true);
+    setCurrentUser({
+      ...user,
+      createdAt: user.createdAt || new Date().toISOString(),
+    });
+    closeAuth();
     setTimeout(() => {
-      alert('Sign in successful! Welcome back!');
-      handleNavigate('home'); // Navigate to home after successful sign in
+      alert(`🎉 Welcome back, ${user.name}!`);
+      goTo('/');
     }, 100);
   };
 
   const handleSignUp = (user, email) => {
-    // After successful sign up, show sign in form with pre-filled email
     setPreFilledEmail(email);
-    setShowAuthForm('signin');
-    
     setTimeout(() => {
-      alert('Sign up successful! Please sign in with your credentials.');
+      alert(`🎊 Welcome ${user.name}! Please sign in to continue.`);
+      setShowAuthForm('signin');
     }, 100);
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-    handleNavigate('home');
-  };
-
-  const closeAuthForm = () => {
-    setShowAuthForm(null);
-    setPreFilledEmail(''); // Reset pre-filled email when closing auth form
-  };
-
-  const renderCurrentPage = () => {
-    console.log('Current page:', currentPage);
-    console.log('From AllProducts:', fromAllProducts);
-    
-    switch (currentPage) {
-      case 'home':
-        return (
-          <div id="home-page">
-            <Hero />
-            <About id="about" />
-            <Leadership id="leadership" />
-            <Services 
-              id="services" 
-              onServiceClick={handleServiceClick}
-              onViewAllClick={handleViewAllClick}
-            />
-            <Feedback id="feedback" />
-            <Footer id="contact" />
-          </div>
-        );
-      case 'product':
-        return (
-          <ProductPage 
-            productType={currentProductType} 
-            onNavigate={handleNavigate}
-            fromAllProducts={fromAllProducts}
-          />
-        );
-      case 'all-products':
-        return (
-          <AllProducts 
-            onProductClick={(productType) => handleServiceClick(productType, { fromAllProducts: true })}
-            onNavigate={handleNavigate}
-          />
-        );
-      case 'profile':
-        return (
-          <div className="profile-page">
-            <Profile 
-              currentUser={currentUser}
-              onNavigate={handleNavigate}
-              onLogout={handleLogout}
-            />
-          </div>
-        );
-      default:
-        return (
-          <div id="home-page">
-            <Hero />
-            <About id="about" />
-            <Leadership id="leadership" />
-            <Services 
-              id="services" 
-              onServiceClick={handleServiceClick}
-              onViewAllClick={handleViewAllClick}
-            />
-            <Feedback id="feedback" />
-            <Footer id="contact" />
-          </div>
-        );
+  const handleSignOut = async () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      try {
+        await signOut(auth);
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+        alert('Signed out successfully.');
+        goTo('/');
+      } catch (e) {
+        console.error(e);
+        alert('Sign-out error. Please try again.');
+      }
     }
   };
 
-  const renderAuthForm = () => {
-    if (!showAuthForm) return null;
+  /* ---------- Navbar navigation handler ---------- */
+  const handleNavbarNavigation = (section) => {
+    switch(section) {
+      case 'home':
+        goToHome();
+        break;
+      case 'about':
+        goToAbout();
+        break;
+      case 'leadership':
+        goToLeadership();
+        break;
+      case 'products':
+        goToProducts();
+        break;
+      case 'services':
+        goToServices();
+        break;
+      case 'blog':
+        goToBlog();
+        break;
+      case 'join-us':
+        goToJoinUs();
+        break;
+      case 'feedback':
+        goToFeedback();
+        break;
+      case 'contact':
+        goToContact();
+        break;
+      case 'profile':
+        // Profile is now handled in dropdown, just close menus
+        console.log('Profile handled in navbar dropdown');
+        break;
+      case 'signout':
+        handleSignOut();
+        break;
+      default:
+        goToHome();
+    }
+  };
 
+  /* ---------- auth overlay ---------- */
+  const renderAuthOverlay = () => {
+    if (!showAuthForm) return null;
     return (
-      <div className="auth-overlay">
-        <div className="auth-form-container">
-          {showAuthForm === 'signin' ? (
-            <SignIn 
-              onNavigate={setShowAuthForm} // Use setShowAuthForm to switch between signin/signup
-              onSignIn={handleSignIn}
-              onClose={closeAuthForm}
-              preFilledEmail={preFilledEmail}
-            />
-          ) : (
-            <SignUp 
-              onNavigate={setShowAuthForm} // Use setShowAuthForm to switch between signin/signup
-              onSignUp={handleSignUp}
-              onClose={closeAuthForm}
-            />
-          )}
-        </div>
+      <div className="auth-overlay-video">
+        {showAuthForm === 'signin' ? (
+          <SignIn
+            onNavigate={setShowAuthForm}
+            onSignIn={handleSignIn}
+            onClose={closeAuth}
+            preFilledEmail={preFilledEmail}
+          />
+        ) : (
+          <SignUp
+            onNavigate={setShowAuthForm}
+            onSignUp={handleSignUp}
+            onClose={closeAuth}
+          />
+        )}
       </div>
     );
   };
 
+  const showRSS = location.pathname === '/' && !showAuthForm;
+
   return (
     <div className={`App ${showAuthForm ? 'auth-overlay-active' : ''}`}>
-      <Navbar 
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        onAuthNavigate={handleAuthNavigation}
+      <Navbar
+        currentPath={location.pathname}
+        onNavigate={handleNavbarNavigation}
+        onAuthNavigate={openAuth}
+        isAuthenticated={isAuthenticated}
         currentUser={currentUser}
-        onLogout={handleLogout}
+        onSignOut={handleSignOut}
+        globalSearchQuery={globalSearchQuery}
+        onGlobalSearchChange={handleGlobalSearchChange}
+        onGlobalSearchClear={handleGlobalSearchClear}
+        onProfileUpdate={handleProfileUpdate}
       />
-      
-      {renderAuthForm()}
-      
-      {!showAuthForm && renderCurrentPage()}
+
+      {showRSS && <IndianAgriRSSFeed />}
+
+      {renderAuthOverlay()}
+
+      {/* === ALL PAGE CONTENT WRAPPED IN .page-content === */}
+      {!showAuthForm && (
+        <div className="page-content">
+          <Routes>
+            {/* Home Route */}
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  onServiceClick={handleServiceClick}
+                  onViewAllClick={handleViewAllClick}
+                />
+              }
+            />
+            
+            {/* Main Pages */}
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/leadership" element={<LeadershipPage />} />
+            <Route 
+              path="/products" 
+              element={
+                <ProductsPage
+                  onServiceClick={handleServiceClick}
+                  onViewAllClick={handleViewAllClick}
+                />
+              } 
+            />
+            
+            {/* Services Page */}
+            <Route path="/services" element={<ServicesPageComponent />} />
+            
+            {/* Blog Pages */}
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
+            
+            {/* Other Pages */}
+            <Route path="/join-us" element={<JoinUsPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+
+            {/* Product Pages */}
+            <Route
+              path="/product/:type"
+              element={
+                <ProductPage 
+                  fromAllProducts={true}
+                  globalSearchQuery={globalSearchQuery}
+                  onGlobalSearchClear={handleGlobalSearchClear}
+                />
+              }
+            />
+            <Route
+              path="/all-products"
+              element={
+                <AllProducts
+                  onProductClick={handleServiceClick}
+                  onNavigate={handleNavbarNavigation}
+                />
+              }
+            />
+
+            {/* 404 Fallback */}
+            <Route
+              path="*"
+              element={
+                <HomePage
+                  onServiceClick={handleServiceClick}
+                  onViewAllClick={handleViewAllClick}
+                />
+              }
+            />
+          </Routes>
+        </div>
+      )}
     </div>
+  );
+};
+
+/* --------------------------------------------------------------------
+   Root App
+   -------------------------------------------------------------------- */
+function App() {
+  return (
+    <BrowserRouter>
+      <RouterWrapper />
+    </BrowserRouter>
   );
 }
 

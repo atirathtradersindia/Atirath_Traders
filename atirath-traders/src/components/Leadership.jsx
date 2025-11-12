@@ -25,7 +25,15 @@ const Leadership = () => {
   return (
     <section id="leadership" className="py-5 px-3">
       <div className="container">
-        <h3 className="h2 fw-bold text-center accent mb-5" data-aos="zoom-in">Our Leadership</h3>
+        {/* HEADING FIXED: Added margin-top to clear navbar */}
+        <h3
+          className="h2 fw-bold text-center accent mb-5"
+          data-aos="zoom-in"
+          style={{ marginTop: '80px' }}   // THIS LINE FIXES THE OVERLAP
+        >
+          Our Leadership
+        </h3>
+
         <div className="row g-4">
           {leaders.map((leader, index) => (
             <div key={index} className="col-md-4" data-aos="fade-up" data-aos-delay={index * 200}>

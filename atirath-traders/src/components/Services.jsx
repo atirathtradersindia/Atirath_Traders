@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
 
 const Services = ({ onServiceClick, onViewAllClick }) => {
+  const navigate = useNavigate(); // For programmatic navigation
+
   const services = [
     {
       name: "Edible Oil Refining",
@@ -100,7 +103,11 @@ const Services = ({ onServiceClick, onViewAllClick }) => {
   const handleServiceClick = (productType) => {
     console.log('Service card clicked:', productType);
     if (onServiceClick) {
-      onServiceClick(productType);
+      // Restore fromAllProducts flag for tracking
+      onServiceClick(productType, { fromAllProducts: true });
+    } else {
+      // Fallback: Direct navigation if onServiceClick is not provided
+      navigate(`/product/${productType}`);
     }
   };
 
@@ -108,13 +115,23 @@ const Services = ({ onServiceClick, onViewAllClick }) => {
     console.log('View All button clicked');
     if (onViewAllClick) {
       onViewAllClick();
+    } else {
+      // Fallback: Navigate to AllProducts page
+      navigate('/allproducts');
     }
   };
 
   return (
     <section id="services" className="py-5 px-3">
       <div className="container">
-        <h3 className="h2 fw-bold text-center accent mb-5" data-aos="zoom-in">Our Products</h3>
+        <h3
+          className="h2 fw-bold text-center accent mb-5"
+          data-aos="zoom-in"
+          style={{ marginTop: '80px' }} // Keep navbar fix
+        >
+          Our Products
+        </h3>
+
         <div className="row g-4">
           {initialServices.map((service, index) => (
             <div 
@@ -156,8 +173,7 @@ const Services = ({ onServiceClick, onViewAllClick }) => {
             </div>
           ))}
         </div>
-        
-        {/* View All Button */}
+
         <div className="text-center mt-5" data-aos="fade-up">
           <button 
             className="btn btn-primary btn-lg px-5"

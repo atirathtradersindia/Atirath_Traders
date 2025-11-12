@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Menu, X, ImageOff } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { productsData, brandsData } from '../data/productsData';
 import BuyModal from './BuyModal';
 
-const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false }) => {
+const ProductPage = ({ profile, fromAllProducts = true, globalSearchQuery = '', onGlobalSearchClear }) => {
+  const { type: productType } = useParams();
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -15,6 +19,12 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
   const [imageErrors, setImageErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
+
+  // Sync with global search query
+  useEffect(() => {
+    setLocalSearchQuery(globalSearchQuery);
+  }, [globalSearchQuery]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -24,41 +34,45 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
   }, []);
 
   useEffect(() => {
-    console.log('ProductPage: productType:', productType, 'productsData:', productsData[productType]);
-    console.log('ProductPage: fromAllProducts:', fromAllProducts);
-    
-    // Reset states when productType changes
     setIsLoading(true);
     setSelectedBrand('all');
     setImageErrors({});
-    
+    setLocalSearchQuery(globalSearchQuery); // Reset search when product type changes
+
     if (productType && productsData[productType]) {
       const productList = productsData[productType];
       const brandList = brandsData[productType] || [];
-      
+
       setProducts(productList);
       setFilteredProducts(productList);
       setBrands(brandList);
-      
-      // Small delay to ensure smooth transition
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 100);
+
+      setTimeout(() => setIsLoading(false), 100);
     } else {
-      console.warn('ProductPage: No products found for productType:', productType);
       setIsLoading(false);
     }
-  }, [productType, fromAllProducts]);
+  }, [productType, fromAllProducts, globalSearchQuery]);
 
   useEffect(() => {
     let filtered = products;
-    
+
+    // Apply brand filter
     if (selectedBrand !== 'all') {
-      filtered = filtered.filter(product => product.brand === selectedBrand);
+      filtered = filtered.filter(p => p.brand === selectedBrand);
     }
-    
+
+    // Apply search filter
+    if (localSearchQuery.trim()) {
+      const query = localSearchQuery.toLowerCase().trim();
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(query) ||
+        product.brand.toLowerCase().includes(query) ||
+        (product.price && product.price.toLowerCase().includes(query))
+      );
+    }
+
     setFilteredProducts(filtered);
-  }, [selectedBrand, products]);
+  }, [selectedBrand, products, localSearchQuery]);
 
   const handleBrandSelect = (brand) => {
     setSelectedBrand(brand);
@@ -67,9 +81,8 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
   };
 
   const handleOrderNow = (product) => {
-    console.log('ProductPage: Opening BuyModal for product:', product);
-    setSelectedProduct({ 
-      ...product, 
+    setSelectedProduct({
+      ...product,
       quantity: 1,
       name: product.name,
       brand: product.brand,
@@ -79,37 +92,42 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
   };
 
   const handleCloseBuyModal = () => {
-    console.log('ProductPage: Closing BuyModal');
     setIsBuyModalOpen(false);
     setSelectedProduct(null);
   };
 
   const handleImageError = (productId) => {
-    setImageErrors(prev => ({
-      ...prev,
-      [productId]: true
-    }));
+    setImageErrors(prev => ({ ...prev, [productId]: true }));
   };
 
   const handleBackClick = () => {
-    console.log('ProductPage: Back button clicked, fromAllProducts:', fromAllProducts);
-    if (fromAllProducts) {
-      // If we came from AllProducts, go back to All Products
-      onNavigate('all-products');
-    } else {
-      // Otherwise, go back to home
-      onNavigate('home');
+    navigate('/all-products');
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setLocalSearchQuery(query);
+    // Note: The global search is handled by the parent component via Navbar
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Search is handled automatically by the useEffect
+  };
+
+  const clearSearch = () => {
+    setLocalSearchQuery('');
+    if (onGlobalSearchClear) {
+      onGlobalSearchClear();
     }
   };
 
-  // Format brand name for display
   const formatBrandName = (brand) => {
     if (brand === 'all') return 'All Brands';
     return brand.charAt(0).toUpperCase() + brand.slice(1).replace(/_/g, ' ');
   };
 
-  // Fallback images for different categories
-  const getFallbackImage = (category, productName) => {
+  const getFallbackImage = (category) => {
     const fallbackImages = {
       rice: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=60',
       spices: 'https://images.unsplash.com/photo-1557841450-9aa4b8cbf6c0?w=500&auto=format&fit=crop&q=60',
@@ -123,32 +141,15 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
     return fallbackImages[category] || fallbackImages.default;
   };
 
-  if (!productType) {
+  if (!productType || !productsData[productType]) {
     return (
       <div className="d-flex justify-content-center align-items-center min-vh-50">
         <div className="text-center">
-          <p className="h5 text-muted">No category selected.</p>
-          <button 
-            className="btn btn-primary mt-3"
-            onClick={handleBackClick}
-          >
-            Back to {fromAllProducts ? 'All Products' : 'Home'}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!productsData[productType]) {
-    return (
-      <div className="d-flex justify-content-center align-items-center min-vh-50">
-        <div className="text-center">
-          <p className="h5 text-muted">No products available for this category.</p>
-          <button 
-            className="btn btn-primary mt-3"
-            onClick={handleBackClick}
-          >
-            Back to {fromAllProducts ? 'All Products' : 'Home'}
+          <p className="h5 text-muted">
+            {productType ? 'No products available' : 'No category selected'}
+          </p>
+          <button className="btn btn-primary mt-3" onClick={handleBackClick}>
+            Back to All Products
           </button>
         </div>
       </div>
@@ -157,32 +158,30 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
 
   return (
     <div className="product-page">
-      {/* Desktop Categories Toggle */}
-      <button 
+      {/* Desktop Toggle */}
+      <button
         className="categories-toggle d-none d-md-flex"
+        style={{ gap: '1rem', top: '170px', bottom: 'auto' }}
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         <Menu className="w-5 h-5" /> Brands
       </button>
-      
-      {/* Mobile Categories Toggle */}
-      <button 
+
+      {/* Mobile Toggle */}
+      <button
         className="categories-toggle-mobile d-md-none"
         onClick={() => setMobileMenuOpen(true)}
       >
         <Menu className="w-5 h-5" /> Brands
       </button>
-      
-      {/* Desktop Sidebar - Fixed sliding animation */}
+
+      {/* Desktop Sidebar */}
       <div className={`categories-sidebar ${sidebarOpen ? 'active' : ''} d-none d-md-block`}>
         <div className="sidebar-header">
           <h3 className="h4 fw-bold accent mb-0">
             {productType.charAt(0).toUpperCase() + productType.slice(1)} Brands
           </h3>
-          <button 
-            className="btn btn-link p-0 text-white"
-            onClick={() => setSidebarOpen(false)}
-          >
+          <button className="btn btn-link p-0 text-white" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -194,7 +193,7 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
             >
               <span className="brand-text">All Brands</span>
             </li>
-            {brands.map((brand, index) => (
+            {brands.map(brand => (
               <li
                 key={brand}
                 className={`brand-item ${selectedBrand === brand ? 'active' : ''}`}
@@ -206,21 +205,17 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
           </ul>
         </div>
       </div>
-      
-      {/* Mobile Categories Menu */}
+
+      {/* Mobile Menu */}
       <div className={`mobile-categories-menu ${mobileMenuOpen ? 'active' : ''}`}>
         <div className="mobile-categories-header">
           <h3 className="h4 fw-bold accent mb-0">
             {productType.charAt(0).toUpperCase() + productType.slice(1)} Brands
           </h3>
-          <button 
-            className="btn btn-link p-0 text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
+          <button className="btn btn-link p-0 text-white" onClick={() => setMobileMenuOpen(false)}>
             <X className="w-6 h-6" />
           </button>
         </div>
-        
         <div className="mobile-categories-content">
           <div className="brand-list-container-mobile">
             <div className="brand-list-mobile">
@@ -230,7 +225,7 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
               >
                 <span className="brand-text">All Brands</span>
               </div>
-              {brands.map((brand, index) => (
+              {brands.map(brand => (
                 <div
                   key={brand}
                   className={`brand-item-mobile ${selectedBrand === brand ? 'active' : ''}`}
@@ -243,59 +238,70 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
           </div>
         </div>
       </div>
-      
+
       {/* Overlay */}
-      <div 
+      <div
         className={`overlay ${sidebarOpen || mobileMenuOpen ? 'active' : ''}`}
         onClick={() => {
           setSidebarOpen(false);
           setMobileMenuOpen(false);
         }}
       />
-      
+
       {/* Main Content */}
       <div className={`product-main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-        <button 
+        <button
           className="back-button"
-          style={{ top: isMobile ? '180px' : '120px' }} // Increased top position for more space above the back button, with higher value for mobile view
+          style={{ top: isMobile ? '180px' : '120px' }}
           onClick={handleBackClick}
-          title={`Back to ${fromAllProducts ? 'All Products' : 'Home'}`}
+          title="Back to All Products"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        
-        {/* Loading State */}
+
+        {/* Search Bar - Only show on mobile since desktop has it in navbar */}
+        <div className={`product-search-container mb-4 d-md-none`} style={{ marginTop: isMobile ? '7rem' : '10rem' }}>
+
+          {localSearchQuery && (
+            <div className="search-info mt-2">
+              <small className="text-muted">
+                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found for "{localSearchQuery}"
+              </small>
+            </div>
+          )}
+        </div>
+
         {isLoading ? (
           <div className="loading-products">
             <div className="spinner-border text-accent" role="status">
-              <span className="visually-hidden">Loading products...</span>
+              <span className="visually-hidden">Loading...</span>
             </div>
             <p className="mt-3 text-muted">Loading products...</p>
           </div>
         ) : (
           <>
-            {/* Selected Brand Info */}
-            {selectedBrand !== 'all' && (
-              <div className="selected-brand-info mb-4">
-                <span>Showing: <strong>{formatBrandName(selectedBrand)}</strong></span>
-                <button 
-                  className="btn btn-outline-accent btn-sm ms-2"
-                  onClick={() => handleBrandSelect('all')}
-                >
-                  Show All
-                </button>
-              </div>
-            )}
+            {/* Removed the selected brand info display section */}
             
-            {/* Products Grid */}
-            <div 
-              className="products-grid"
-              style={{ marginTop: isMobile ? '0rem' : '0.5rem' }} // Further decreased top margin for even less space above the cards, with smaller value for mobile
-            >
+            <div className="products-grid" style={{ marginTop: isMobile && !localSearchQuery ? '7rem' : '2rem',marginLeft: isMobile ? '1rem' : '5rem', }}>
               {filteredProducts.length === 0 ? (
                 <div className="no-products-message">
                   <p className="h5 accent">No products found</p>
-                  <p className="text-sm opacity-80 mt-2">Try selecting a different brand</p>
+                  <p className="text-sm opacity-80 mt-2">
+                    {localSearchQuery || selectedBrand !== 'all'
+                      ? 'Try adjusting your search or select a different brand'
+                      : 'No products available in this category'}
+                  </p>
+                  {(localSearchQuery || selectedBrand !== 'all') && (
+                    <button
+                      className="btn btn-primary mt-3"
+                      onClick={() => {
+                        setSelectedBrand('all');
+                        clearSearch();
+                      }}
+                    >
+                      Clear Filters
+                    </button>
+                  )}
                 </div>
               ) : (
                 filteredProducts.map(product => (
@@ -307,9 +313,9 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
                           <span className="text-xs text-muted mt-2">Image not available</span>
                         </div>
                       ) : (
-                        <img 
-                          src={product.image} 
-                          alt={product.name} 
+                        <img
+                          src={product.image || getFallbackImage(productType)}
+                          alt={product.name}
                           className="product-image"
                           onError={() => handleImageError(product.id)}
                           loading="lazy"
@@ -318,16 +324,10 @@ const ProductPage = ({ productType, onNavigate, profile, fromAllProducts = false
                     </div>
                     <div className="product-info">
                       <h3 className="product-title fw-semibold mb-2">{product.name}</h3>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <p className="product-price fw-bold text-accent mb-0">{product.price}</p>
-                      </div>
+                      <p className="product-price fw-bold text-accent mb-2">{product.price}</p>
                       <p className="text-xs opacity-70 mt-1">Brand: {formatBrandName(product.brand)}</p>
                       <div className="product-actions d-flex gap-2 mt-3">
-                        <button 
-                          className="btn btn-success btn-sm w-100"
-                          onClick={() => handleOrderNow(product)}
-                          aria-label={`Order ${product.name} now`}
-                        >
+                        <button className="btn btn-success btn-sm w-100" onClick={() => handleOrderNow(product)}>
                           Order Now
                         </button>
                       </div>

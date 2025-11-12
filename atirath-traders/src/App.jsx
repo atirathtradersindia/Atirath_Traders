@@ -13,7 +13,7 @@ import ProductPage from './components/ProductPage';
 import AllProducts from './components/AllProducts';
 import Blog from './components/Blog';
 import BlogPost from './components/BlogPost';
-import JoinUs from './components/Joinus';
+import JoinUs from './components/JoinUs';
 import { SignIn, SignUp } from './components/AuthPages';
 import IndianAgriRSSFeed from './components/IndianAgriRSSFeed';
 import {
